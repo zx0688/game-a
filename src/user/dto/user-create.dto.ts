@@ -1,3 +1,4 @@
+import { Types } from "mongoose";
 import { Reward } from "../schema/user.schema";
 
 export class UserCreateDto {
@@ -7,6 +8,7 @@ export class UserCreateDto {
     stars: number = 3;
     timestamp_recovery: number;
     loot_boxes: any;
+    quest_completed: string[];
     reward: Reward[];
 
     constructor(data: Partial<UserCreateDto> = {}) {
@@ -14,6 +16,7 @@ export class UserCreateDto {
         this.timestamp_recovery = Date.now();
         this.reward = [];
         this.loot_boxes = {};
+        this.quest_completed = [];
         this.coins = {
             "coins_per_week": 0,
             "coins_total": 0

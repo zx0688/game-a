@@ -1,8 +1,9 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { UserDocument, User } from './schema/user.schema';
 import { Model } from 'mongoose';
 import { UserCreateDto } from './dto/user-create.dto';
+import { WebAppInitDataDto } from '../auth/dto/authorize-user-dto';
 
 @Injectable()
 export class UserService {
@@ -10,7 +11,7 @@ export class UserService {
     constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) { }
 
 
-    async getByUid(uid: string): Promise<User | null> {
+    async getByUid(uid: string): Promise<UserDocument | null> {
         try {
             return await this.userModel.findOne({ uid }).exec();
         } catch (error) {
@@ -30,49 +31,37 @@ export class UserService {
         }
     }
 
-    async getLeaderBoard(uids: string[]): Promise<any[]> {
-        const friends = await Promise.all(uids.map(async id => {
-            const friend = await this.getByUid(id);
-            return friend;
+    async findUsersByIds(uids: string[]): Promise<UserDocument[]> {
+        return await this.userModel.find({ uid: { $in: uids } }).limit(100).exec();
+    }
+    async getFriends(uids: string[], timestamp_week: number): Promise<any[]> {
+        const friends = await this.findUsersByIds(uids);
+        friends.forEach(f => {
+            if (f.timestamp && f.timestamp >= timestamp_week)
+                f.coins.coins_per_week = 0;
+        });
+        return friends.map(f => ({
+            [f.uid]: f.coins
         }));
-        return friends
-            .filter(friend => friend !== null)
-            .sort((a, b) => b.coins.coins_total - a.coins.coins_total)
-            .slice(0, 10)
-            .map(f => ({
-                uid: f.uid,
-                data: f.coins
-            }));
     }
 
     public getTimestampNextWeek(): number {
         const now = new Date();
         const startOfNextWeek = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 7);
-        return Math.floor(startOfNextWeek.getTime() / 1000);
+        return startOfNextWeek.getTime();
     }
 
-    public authorization(req: Request) {
-        try {
-            const token = req.headers['authorization'];
+    // public async updateUser(user: UserDocument) {
+    //     return await this.userModel
+    //         .findByIdAndUpdate(user._id, user)
+    //         .select("coins")
+    //         .exec();
+    // }
 
-            return;
-
-            if (!token) {
-                throw new UnauthorizedException('Token is missing');
-            }
-
-            const isValid = true;
-            if (!isValid) {
-                throw new UnauthorizedException('Invalid token');
-            }
-        } catch (error) {
-            throw new UnauthorizedException('Unauthorized', error.message);
-        }
-    }
-
-    private async createAndSaveUser(uid: string): Promise<User> {
+    private async createAndSaveUser(uid: string): Promise<UserDocument> {
         try {
             const newUser = new this.userModel(new UserCreateDto({ uid }));
+            newUser.timestamp = Date.now();
             const savedUser = await newUser.save();
             return savedUser;
         } catch (error) {

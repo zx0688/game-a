@@ -1,24 +1,29 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, Schema as MongooseSchema, Types } from 'mongoose';
+import mongoose, { HydratedDocument, Schema as MongooseSchema, Types, Document, ObjectId } from 'mongoose';
 
 export type UserDocument = HydratedDocument<User>;
 
 @Schema()
 export class Coins {
-    @Prop()
+    @Prop({ type: Number })
     coins_total: number;
-
-    @Prop()
+    @Prop({ type: Number })
     coins_per_week: number;
 }
 
 @Schema()
 export class Reward {
     @Prop()
+    id: string;
+    @Prop({ type: Number })
     coins: number;
-
-    @Prop()
+    @Prop({ type: Number })
+    level: number;
+    @Prop({ type: String })
     stars: string;
+    constructor() {
+        this.id = new mongoose.Types.ObjectId().toString();
+    }
 }
 
 @Schema()
@@ -40,6 +45,12 @@ export class User {
 
     @Prop({ type: MongooseSchema.Types.Mixed })
     loot_boxes: any;
+
+    @Prop()
+    quest_completed: string[];
+
+    @Prop({ type: Number })
+    timestamp: number;
 
     @Prop({ type: [{ type: Types.ObjectId }], ref: 'Reward' })
     reward: Reward[];

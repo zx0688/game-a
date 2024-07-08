@@ -3,7 +3,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { UserDocument, User } from './schema/user.schema';
 import { Model } from 'mongoose';
 import { UserCreateDto } from './dto/user-create.dto';
-import { WebAppInitDataDto } from '../auth/dto/authorize-user-dto';
+import { WebAppInitDataDto, WebAppUserDto } from '../auth/dto/authorize-user-dto';
+import { UserDto } from 'src/telegram/dto/telegram-api-dto';
 
 @Injectable()
 export class UserService {
@@ -19,16 +20,52 @@ export class UserService {
         }
     }
 
-    async getByUidOrCreate(uid: string): Promise<User> {
+    async getByUidOrCreate(userDto: WebAppUserDto): Promise<User> {
         try {
+            const uid = userDto.id.toString();
             let user: User = await this.userModel.findOne({ uid }).exec();
             if (!user) {
-                user = await this.createAndSaveUser(uid);
+                user = await this.createAndSaveUser(userDto);
             }
             return user;
         } catch (error) {
             throw new Error(`Error: ${error.message}`);
         }
+    }
+
+    async createLeaderBoard(): Promise<any> {
+
+        const total = await this.userModel
+            .find({})
+            .sort({ "coins.coins_total": -1 })
+            .limit(10)
+            .select("username uid _id photo_url coins")
+            .lean()
+            .exec();
+        const week = await this.userModel
+            .find({})
+            .sort({ "coins.coins_week": -1 })
+            .limit(10)
+            .select("username uid _id photo_url coins")
+            .lean()
+            .exec()
+
+        return {
+            total: total.map(user => ({
+                username: user.username,
+                uid: user.uid,
+                _id: user._id,
+                photo_url: user.photo_url,
+                coins: user.coins
+            })),
+            week: week.map(user => ({
+                username: user.username,
+                uid: user.uid,
+                _id: user._id,
+                photo_url: user.photo_url,
+                coins: user.coins
+            }))
+        };
     }
 
     async findUsersByIds(uids: string[]): Promise<UserDocument[]> {
@@ -38,7 +75,7 @@ export class UserService {
         const friends = await this.findUsersByIds(uids);
         friends.forEach(f => {
             if (f.timestamp && f.timestamp >= timestamp_week)
-                f.coins.coins_per_week = 0;
+                f.coins.coins_week = 0;
         });
         return friends.map(f => ({
             [f.uid]: f.coins
@@ -51,16 +88,10 @@ export class UserService {
         return startOfNextWeek.getTime();
     }
 
-    // public async updateUser(user: UserDocument) {
-    //     return await this.userModel
-    //         .findByIdAndUpdate(user._id, user)
-    //         .select("coins")
-    //         .exec();
-    // }
 
-    private async createAndSaveUser(uid: string): Promise<UserDocument> {
+    private async createAndSaveUser(user: WebAppUserDto): Promise<UserDocument> {
         try {
-            const newUser = new this.userModel(new UserCreateDto({ uid }));
+            const newUser = new this.userModel(new UserCreateDto(user));
             newUser.timestamp = Date.now();
             const savedUser = await newUser.save();
             return savedUser;

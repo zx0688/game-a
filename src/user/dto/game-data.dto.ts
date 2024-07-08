@@ -1,19 +1,24 @@
 
 export class GameDataDto {
-    readonly starPrices = starPrices;
+    readonly levelStars = levelStars;
     readonly referral = referral;
     readonly referralBonus = referralBonus;
     readonly quests = viralQuestReward;
 
 }
 
-const starPrices = {
-    "9": {
-        "50": 34
-    },
-    "75": {
-        "34": 553
-    }
+const levelStars = {
+    "50": 9,
+    "75": 18,
+    "100": 27,
+    "150": 36,
+    "250": 45,
+    "350": 54,
+    "500": 63,
+    "750": 72,
+    "1000": 81,
+    "1500": 89,
+    "2500": 99
 };
 
 const referral =

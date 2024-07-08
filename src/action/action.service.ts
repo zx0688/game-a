@@ -67,22 +67,14 @@ export class ActionService {
         }
     }
 
-    async createItemPayment(user: UserDocument, value: any): Promise<Reward> {
-        var reward = new Reward();
-        reward.coins += value;
-        user.reward.push(reward);
-        await user.save();
-        return reward;
-    }
-
     private addCoins(user: UserDocument, value: number): any {
 
         user.coins.coins_total += value;
 
         if (user.timestamp >= this.userService.getTimestampNextWeek())
-            user.coins.coins_per_week = 0;
+            user.coins.coins_week = 0;
 
-        user.coins.coins_per_week += value;
+        user.coins.coins_week += value;
     }
 
 

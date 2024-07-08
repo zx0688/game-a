@@ -3,7 +3,7 @@ import * as crypto from 'crypto';
 import * as qs from 'qs';
 import { createHash } from 'crypto';
 import { TokenDto, WebAppInitDataDto } from './dto/authorize-user-dto';
-import { botToken } from 'src/app.module';
+import { botToken } from 'src/telegram/telegram.service';
 
 @Injectable()
 export class AuthService {
@@ -12,11 +12,15 @@ export class AuthService {
     public authorization(authorizationData: WebAppInitDataDto): TokenDto {
 
         const data = authorizationData;
+
+        if ((Date.now() / 1000 - data.auth_date) > 86400)
+            throw new HttpException(`Auth data is outdated`, HttpStatus.UNAUTHORIZED);
+
         const hash = data.hash as string;
         delete data.hash;
 
         const secretKey = crypto
-            .createHmac("sha256", "WebAppData")
+            .createHash("sha256")
             .update(botToken)
             .digest();
 
@@ -35,7 +39,7 @@ export class AuthService {
             throw new HttpException(`Verification failed!`, HttpStatus.UNAUTHORIZED);
         }
         const uid = authorizationData.user.id.toString();
-        const expire = data.auth_date + 3600; // 1 hour
+        const expire = data.auth_date + 86400; // 24 hour
         const token = this.createHash(uid, expire);
 
         return {
@@ -52,7 +56,7 @@ export class AuthService {
     public checkHash(token: TokenDto) {
 
         if (process.env.NODE_ENV === 'development' || token.hash == "Gm2T~}@AnL%l2}NvxcOQ")
-            return;
+            return { message: "you are in develop mode. auth doesnt needed" };
 
         if (Math.floor(Date.now() / 1000) > token.expire)
             throw new HttpException("Verification failed due to timeout", HttpStatus.UNAUTHORIZED);

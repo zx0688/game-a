@@ -1,7 +1,10 @@
 # compiled output
-/dist
+# /dist
 /node_modules
 /build
+/.pnp
+.pnp.js
+/coverage
 
 # Logs
 logs
@@ -11,7 +14,7 @@ pnpm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
-
+.vscode
 # OS
 .DS_Store
 

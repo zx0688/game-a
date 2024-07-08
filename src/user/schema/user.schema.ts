@@ -8,7 +8,7 @@ export class Coins {
     @Prop({ type: Number })
     coins_total: number;
     @Prop({ type: Number })
-    coins_per_week: number;
+    coins_week: number;
 }
 
 @Schema()
@@ -36,6 +36,12 @@ export class User {
 
     @Prop({ type: Number })
     level: number;
+
+    @Prop({ type: String })
+    username: string;
+
+    @Prop({ type: String })
+    photo_url: string;
 
     @Prop({ type: Number })
     stars: number;

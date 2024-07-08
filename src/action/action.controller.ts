@@ -1,13 +1,16 @@
-import { Controller, Get, Query, Param, Post, ParseArrayPipe, Request, Body, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Query, Param, Post, ParseArrayPipe, Request, Body, HttpException, HttpStatus, Inject } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 import { ActionService } from './action.service';
 import { AuthService } from 'src/auth/auth.service';
 import { TokenDto } from 'src/auth/dto/authorize-user-dto';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 
 @Controller('action')
 export class ActionController {
 
     constructor(
+        @Inject(CACHE_MANAGER) private cache: Cache,
         private userService: UserService,
         private actionService: ActionService,
         private authService: AuthService) { }
@@ -25,9 +28,10 @@ export class ActionController {
         const user = await this.userService.getByUid(uid);
         if (!user)
             throw new Error(`Error: User ${uid} is not found!`);
-
+        const leaderboard = await this.cache.get('leaderboard');
         let response = {
             "timestamp": Date.now(),
+            "leaderboard": leaderboard,
             "updated": await this.actionService.applyCommand(user, command, value)
         };
 

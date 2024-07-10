@@ -5,7 +5,7 @@ import { HttpModule, HttpService } from '@nestjs/axios';
 import { UpdateDto } from './dto/telegram-api-dto';
 import { UserService } from 'src/user/user.service';
 import { GameDataInstance } from 'src/user/dto/game-data.dto';
-import { Reward } from 'src/user/schema/user.schema';
+import { Item } from 'src/user/schema/user.schema';
 import { Telegraf } from 'telegraf';
 
 
@@ -22,12 +22,13 @@ export class TelegramService {
 
         //bot.start((ctx) => ctx.reply('Welcome'))
         //bot.help((ctx) => ctx.reply('Send me a sticker'))
-        bot.on('message', (ctx) => {
+        /*bot.on('message', (ctx) => {
             const chatId = ctx.message.chat.id;
             bot.telegram.sendMessage(chatId, "234234");
         });
         //bot.hears('hi', (ctx) => ctx.reply('Hey there'));
-        bot.launch();
+        bot.launch();*/
+
     }
 
     async webhook(update: UpdateDto): Promise<UpdateDto | null> {
@@ -46,9 +47,9 @@ export class TelegramService {
         //payment successful, send the item to user
         else if (update.message.successful_payment && update.message.invoice) {
             const user = await this.userService.getByUid(update.pre_checkout_query.from.id.toString());
-            const reward = new Reward();
+            const reward = new Item();
             reward.level = GameDataInstance.levelStars[update.message.successful_payment.total_amount];
-            user.reward.push(reward);
+            user.items.push(reward);
             await user.save();
         }
 

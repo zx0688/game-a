@@ -1,14 +1,26 @@
+import { ApiProperty } from "@nestjs/swagger";
+
 export class WebAppUserDto {
+    @ApiProperty({
+        default: "296065026",
+    })
     id: number;
-    is_bot?: boolean;
+    @ApiProperty({
+        default: "Evgenii",
+    })
     first_name: string;
+    @ApiProperty({
+        default: "Kutepov",
+    })
     last_name?: string;
+    @ApiProperty({
+        default: "Evgeny_Kutepov",
+    })
     username?: string;
+    @ApiProperty()
     language_code?: string;
-    is_premium?: boolean;
-    added_to_attachment_menu?: boolean;
+    @ApiProperty()
     allows_write_to_pm?: boolean;
-    photo_url?: string;
 }
 
 export class LoginDto {
@@ -19,19 +31,38 @@ export class LoginDto {
     photo_url?: string;
 }
 export class TokenDto {
+    @ApiProperty({
+        default: "26541fcd09f7b89b76db07313ee15a663f8639f6b1aec64e6053994befc7efc1",
+        description: "хеш запросов на бек"
+    })
     hash: string;
+    @ApiProperty({
+        default: "234324324",
+        description: "id игрока на платформе"
+    })
     uid: string;
+    @ApiProperty({
+        default: 173243243,
+        description: "истечение токен"
+    })
     expire: number;
 }
 
 export class WebAppInitDataDto {
+    @ApiProperty({
+        default: "AAECmKURAAAAAAKYpRHolqmy",
+    })
     query_id?: string;
+
+    @ApiProperty()
     user?: WebAppUserDto;
-    receiver?: WebAppUserDto;
-    chat_type?: string;
-    chat_instance?: string;
-    start_param?: string;
-    can_send_after?: number;
-    auth_date: number;
+
+    @ApiProperty({
+        default: "1720557663",
+    })
+    auth_date: string;
+    @ApiProperty({
+        default: "26541fcd09f7b89b76db07313ee15a663f8639f6b1aec64e6053994befc7efc1",
+    })
     hash: string;
 }

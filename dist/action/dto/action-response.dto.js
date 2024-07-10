@@ -9,40 +9,33 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UpdateDto = exports.MessageDto = exports.SuccessPaymentDto = exports.PreCheckoutQuery = exports.InvoiceDto = void 0;
+exports.ActionResponseDto = void 0;
 const swagger_1 = require("@nestjs/swagger");
-class InvoiceDto {
+const user_response_dto_1 = require("../../user/dto/user-response.dto");
+class ActionResponseDto {
+    constructor(partial) {
+        Object.assign(this, partial);
+    }
 }
-exports.InvoiceDto = InvoiceDto;
-class PreCheckoutQuery {
-}
-exports.PreCheckoutQuery = PreCheckoutQuery;
-class SuccessPaymentDto {
-}
-exports.SuccessPaymentDto = SuccessPaymentDto;
-class MessageDto {
-}
-exports.MessageDto = MessageDto;
-class UpdateDto {
-}
-exports.UpdateDto = UpdateDto;
+exports.ActionResponseDto = ActionResponseDto;
 __decorate([
     (0, swagger_1.ApiProperty)({
-        description: "айди сообщения",
-        default: 234
+        description: "текущее время на беке",
+        default: 2343432442
     }),
     __metadata("design:type", Number)
-], UpdateDto.prototype, "update_id", void 0);
+], ActionResponseDto.prototype, "timestamp", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({
-        description: "тело сообщения",
+        description: "таблица лидеров",
     }),
-    __metadata("design:type", MessageDto)
-], UpdateDto.prototype, "message", void 0);
+    __metadata("design:type", user_response_dto_1.LeaderBoardDto)
+], ActionResponseDto.prototype, "leaderboard", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({
-        description: "проверка готовности совершить платеж",
+        description: "произведенные изменения профиля",
     }),
-    __metadata("design:type", PreCheckoutQuery)
-], UpdateDto.prototype, "pre_checkout_query", void 0);
-//# sourceMappingURL=telegram-api-dto.js.map
+    __metadata("design:type", Object)
+], ActionResponseDto.prototype, "updated", void 0);
+;
+//# sourceMappingURL=action-response.dto.js.map

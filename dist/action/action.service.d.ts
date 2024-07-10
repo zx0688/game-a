@@ -1,4 +1,5 @@
-import { UserDocument } from 'src/user/schema/user.schema';
+import { Model } from 'mongoose';
+import { Coins, Item, UserDocument } from 'src/user/schema/user.schema';
 import { UserService } from 'src/user/user.service';
 export declare enum ActionCommand {
     COLLECT = "collect",
@@ -7,7 +8,10 @@ export declare enum ActionCommand {
 }
 export declare class ActionService {
     private userService;
-    constructor(userService: UserService);
-    applyCommand(user: UserDocument, command: string, value: string): Promise<any>;
+    private userModel;
+    constructor(userService: UserService, userModel: Model<UserDocument>);
+    collect(user: UserDocument, value: string): Promise<Coins>;
+    accept(user: UserDocument, value: string): Promise<Item[]>;
+    quest(user: UserDocument, value: string): Promise<Item[]>;
     private addCoins;
 }

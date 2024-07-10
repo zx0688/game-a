@@ -1,12 +1,15 @@
 import { Controller, Get, Param, Request, UnauthorizedException, Query, ParseArrayPipe, Body, HttpStatus, HttpException, ValidationPipe, UsePipes, Inject } from '@nestjs/common';
 import { UserService } from './user.service';
-import { User } from './schema/user.schema';
+import { Item, User } from './schema/user.schema';
 import { GameDataInstance } from './dto/game-data.dto';
 import { AuthService } from 'src/auth/auth.service';
 import { TokenDto, WebAppInitDataDto } from 'src/auth/dto/authorize-user-dto';
 import { ActionService } from 'src/action/action.service';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
+import { Cron, CronExpression } from '@nestjs/schedule';
+import { ApiBody, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
+import { LeaderBoardDto, ProfileResponseDto } from './dto/user-response.dto';
 
 @Controller('profile')
 export class UserController {
@@ -18,28 +21,48 @@ export class UserController {
         private actionService: ActionService) { }
 
     @Get('get')
+    @ApiOperation({ summary: 'Получение профиля юзера' })
+    @ApiResponse({
+        status: 200,
+        type: ProfileResponseDto
+    })
+    @ApiParam({
+        name: 'authorizationData',
+        required: true,
+        description: 'WebAppInitData'
+    })
     async getProfile(@Body() authorizationData: WebAppInitDataDto) {
 
         const token = this.authService.authorization(authorizationData);
 
-        const uid = token.uid;
+        if (!token)
+            throw new HttpException("Unauth user!", HttpStatus.UNAUTHORIZED);
+
         const user = await this.userService.getByUidOrCreate(authorizationData.user);
-        const timestamp_week = this.userService.getTimestampNextWeek();
-        //const friends = uids ? await this.userService.getFriends(uids, timestamp_week) : [];
+        const timestamp_next_week = this.userService.getTimestampNextWeek();
         const leaderboard = await this.cache.get('leaderboard');
-        let response = {
+
+        return new ProfileResponseDto({
             "timestamp": Date.now(),
             "user": user,
             "data": GameDataInstance,
-            "timestampNextWeek": timestamp_week,
-            "leaderboard": leaderboard,
+            "timestampNextWeek": timestamp_next_week,
+            "leaderboard": leaderboard as LeaderBoardDto,
             "token": token
-        };
-
-        return response;
+        });
     }
 
     @Get("items")
+    @ApiOperation({ summary: 'Получение списка наград пользователя (не подтвержденых)' })
+    @ApiResponse({
+        status: 200,
+        type: [Item]
+    })
+    @ApiBody({
+        description: 'Токен для запросов на бекенд',
+        required: true,
+        type: TokenDto
+    })
     async getItems(@Body() token: TokenDto) {
 
         this.authService.checkHash(token);
@@ -48,29 +71,17 @@ export class UserController {
         const user = await this.userService.getByUid(uid);
         if (!user)
             throw new HttpException("user not found!", HttpStatus.EXPECTATION_FAILED);
-        return user.reward;
+        return user.items;
     }
 
-
-    @Get("friends")
-    async getFriendProfiles(
-        @Query('uids', new ParseArrayPipe({ items: String, separator: ',' })) uids: string[],
-        @Body() token: TokenDto) {
-
-        this.authService.checkHash(token);
-        const uid = token.uid;
-
-        if (!uids)
-            throw new Error("Error: uids is empty!")
-
-        const leaderboard = await this.cache.get('leaderboard');
-        let response = {
-            "timestamp": Date.now(),
-            "leaderboard": leaderboard,
-            "friends": await this.userService.getFriends(uids, this.userService.getTimestampNextWeek())
-        };
-
-        return response;
+    @Cron(CronExpression.EVERY_MINUTE)
+    @ApiOperation({ summary: 'Обновление таблицы лидеров по расписанию' })
+    async updateLeaderboard(): Promise<void> {
+        this.userService.createTimestampNextWeek();
+        const leaderboard = await this.userService.createLeaderBoard();
+        await this.cache.set('leaderboard', leaderboard, -1);
+        return;
     }
+
 
 }

@@ -1,8 +1,21 @@
+import { ApiProperty } from "@nestjs/swagger";
 
 export class GameDataDto {
+    @ApiProperty({
+        description: "продажа звез за уровень"
+    })
     readonly levelStars = levelStars;
+    @ApiProperty({
+        description: "рефералы"
+    })
     readonly referral = referral;
+    @ApiProperty({
+        description: "бонусы за реферал"
+    })
     readonly referralBonus = referralBonus;
+    @ApiProperty({
+        description: "задания"
+    })
     readonly quests = viralQuestReward;
 
 }

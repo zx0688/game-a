@@ -1,15 +1,10 @@
-export declare class UserDto {
-    id: number;
-    first_name: string;
-    last_name: string;
-    username: string;
-}
+import { WebAppUserDto } from "src/auth/dto/authorize-user-dto";
 export declare class InvoiceDto {
     title: string;
 }
 export declare class PreCheckoutQuery {
     id: string;
-    from: UserDto;
+    from: WebAppUserDto;
     currency: string;
     total_amount: number;
     invoice_payload: string;
@@ -21,7 +16,7 @@ export declare class SuccessPaymentDto {
 }
 export declare class MessageDto {
     message_id: number;
-    from?: UserDto;
+    from?: WebAppUserDto;
     invoice?: InvoiceDto;
     successful_payment?: SuccessPaymentDto;
 }

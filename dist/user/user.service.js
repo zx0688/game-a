@@ -21,6 +21,7 @@ const user_create_dto_1 = require("./dto/user-create.dto");
 let UserService = class UserService {
     constructor(userModel) {
         this.userModel = userModel;
+        this.timeStampNextWeek = null;
     }
     async getByUid(uid) {
         try {
@@ -35,7 +36,7 @@ let UserService = class UserService {
             const uid = userDto.id.toString();
             let user = await this.userModel.findOne({ uid }).exec();
             if (!user) {
-                user = await this.createAndSaveUser(userDto);
+                user = await this.createUser(userDto);
             }
             return user;
         }
@@ -44,35 +45,29 @@ let UserService = class UserService {
         }
     }
     async createLeaderBoard() {
-        const total = await this.userModel
-            .find({})
-            .sort({ "coins.coins_total": -1 })
-            .limit(10)
-            .select("username uid _id photo_url coins")
-            .lean()
-            .exec();
-        const week = await this.userModel
-            .find({})
-            .sort({ "coins.coins_week": -1 })
-            .limit(10)
-            .select("username uid _id photo_url coins")
-            .lean()
-            .exec();
+        let total, week;
+        try {
+            total = await this.userModel
+                .find({})
+                .sort({ "coins.coins_total": -1 })
+                .limit(10)
+                .select("user coins")
+                .lean()
+                .exec();
+            week = await this.userModel
+                .find({})
+                .sort({ "coins.coins_week": -1 })
+                .limit(10)
+                .select("user coins")
+                .lean()
+                .exec();
+        }
+        catch (error) {
+            throw new common_1.HttpException(`Error sorting users ${error}`, common_1.HttpStatus.NOT_FOUND);
+        }
         return {
-            total: total.map(user => ({
-                username: user.username,
-                uid: user.uid,
-                _id: user._id,
-                photo_url: user.photo_url,
-                coins: user.coins
-            })),
-            week: week.map(user => ({
-                username: user.username,
-                uid: user.uid,
-                _id: user._id,
-                photo_url: user.photo_url,
-                coins: user.coins
-            }))
+            total: total,
+            week: week
         };
     }
     async findUsersByIds(uids) {
@@ -89,11 +84,17 @@ let UserService = class UserService {
         }));
     }
     getTimestampNextWeek() {
+        if (!this.timeStampNextWeek)
+            this.createTimestampNextWeek();
+        return this.timeStampNextWeek;
+    }
+    createTimestampNextWeek() {
         const now = new Date();
         const startOfNextWeek = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 7);
-        return startOfNextWeek.getTime();
+        this.timeStampNextWeek = startOfNextWeek.getTime();
+        return this.timeStampNextWeek;
     }
-    async createAndSaveUser(user) {
+    async createUser(user) {
         try {
             const newUser = new this.userModel(new user_create_dto_1.UserCreateDto(user));
             newUser.timestamp = Date.now();

@@ -9,96 +9,144 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserSchema = exports.User = exports.Reward = exports.Coins = void 0;
+exports.UserSchema = exports.User = exports.Item = exports.Coins = void 0;
 const mongoose_1 = require("@nestjs/mongoose");
+const swagger_1 = require("@nestjs/swagger");
 const mongoose_2 = require("mongoose");
-let Coins = class Coins {
-};
+const authorize_user_dto_1 = require("../../auth/dto/authorize-user-dto");
+class Coins {
+}
 exports.Coins = Coins;
 __decorate([
-    (0, mongoose_1.Prop)({ type: Number }),
+    (0, swagger_1.ApiProperty)({
+        description: "общее количество монет",
+        default: 12
+    }),
     __metadata("design:type", Number)
 ], Coins.prototype, "coins_total", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ type: Number }),
+    (0, swagger_1.ApiProperty)({
+        description: "Количество монет собранных за неделю",
+        default: 12
+    }),
     __metadata("design:type", Number)
 ], Coins.prototype, "coins_week", void 0);
-exports.Coins = Coins = __decorate([
-    (0, mongoose_1.Schema)()
-], Coins);
-let Reward = class Reward {
+let Item = class Item {
     constructor() {
         this.id = new mongoose_2.default.Types.ObjectId().toString();
     }
 };
-exports.Reward = Reward;
+exports.Item = Item;
 __decorate([
-    (0, mongoose_1.Prop)(),
+    (0, swagger_1.ApiProperty)({
+        description: "id Не выданная награда",
+        default: "1"
+    }),
     __metadata("design:type", String)
-], Reward.prototype, "id", void 0);
+], Item.prototype, "id", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ type: Number }),
+    (0, swagger_1.ApiProperty)({
+        description: "монет в награде",
+    }),
     __metadata("design:type", Number)
-], Reward.prototype, "coins", void 0);
+], Item.prototype, "coins", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ type: Number }),
+    (0, swagger_1.ApiProperty)({
+        description: "уровней в награде",
+    }),
     __metadata("design:type", Number)
-], Reward.prototype, "level", void 0);
+], Item.prototype, "level", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ type: String }),
-    __metadata("design:type", String)
-], Reward.prototype, "stars", void 0);
-exports.Reward = Reward = __decorate([
+    (0, swagger_1.ApiProperty)({
+        description: "звезд в награде",
+    }),
+    __metadata("design:type", Number)
+], Item.prototype, "stars", void 0);
+exports.Item = Item = __decorate([
     (0, mongoose_1.Schema)(),
     __metadata("design:paramtypes", [])
-], Reward);
+], Item);
 let User = class User {
 };
 exports.User = User;
 __decorate([
+    (0, swagger_1.ApiProperty)({
+        description: "id игрока в телеграмме",
+        default: "1"
+    }),
     (0, mongoose_1.Prop)({ required: true, unique: true }),
     __metadata("design:type", String)
 ], User.prototype, "uid", void 0);
 __decorate([
+    (0, swagger_1.ApiProperty)({
+        description: "профиль на платформе"
+    }),
+    (0, mongoose_1.Prop)({ required: true, type: authorize_user_dto_1.WebAppUserDto }),
+    __metadata("design:type", authorize_user_dto_1.WebAppUserDto)
+], User.prototype, "user", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        description: "количество монет",
+        default: 2
+    }),
     (0, mongoose_1.Prop)({ type: Coins }),
     __metadata("design:type", Coins)
 ], User.prototype, "coins", void 0);
 __decorate([
+    (0, swagger_1.ApiProperty)({
+        description: "уровнь",
+        default: 1
+    }),
     (0, mongoose_1.Prop)({ type: Number }),
     __metadata("design:type", Number)
 ], User.prototype, "level", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ type: String }),
-    __metadata("design:type", String)
-], User.prototype, "username", void 0);
-__decorate([
-    (0, mongoose_1.Prop)({ type: String }),
-    __metadata("design:type", String)
-], User.prototype, "photo_url", void 0);
-__decorate([
+    (0, swagger_1.ApiProperty)({
+        description: "количество звезд",
+        default: 1
+    }),
     (0, mongoose_1.Prop)({ type: Number }),
     __metadata("design:type", Number)
 ], User.prototype, "stars", void 0);
 __decorate([
+    (0, swagger_1.ApiProperty)({
+        description: "время истечения энергии",
+        default: 32423423
+    }),
     (0, mongoose_1.Prop)({ type: Number }),
     __metadata("design:type", Number)
 ], User.prototype, "timestamp_recovery", void 0);
 __decorate([
+    (0, swagger_1.ApiProperty)({
+        description: "время истечения энергии"
+    }),
     (0, mongoose_1.Prop)({ type: mongoose_2.Schema.Types.Mixed }),
     __metadata("design:type", Object)
 ], User.prototype, "loot_boxes", void 0);
 __decorate([
+    (0, swagger_1.ApiProperty)({
+        description: "ids завершеннх заданий",
+        default: ["123", "343"]
+    }),
     (0, mongoose_1.Prop)(),
     __metadata("design:type", Array)
 ], User.prototype, "quest_completed", void 0);
 __decorate([
+    (0, swagger_1.ApiProperty)({
+        description: "время последних действий игрока",
+        default: 234324234
+    }),
     (0, mongoose_1.Prop)({ type: Number }),
     __metadata("design:type", Number)
 ], User.prototype, "timestamp", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ type: [{ type: mongoose_2.Types.ObjectId }], ref: 'Reward' }),
+    (0, swagger_1.ApiProperty)({
+        description: "не выданная награда",
+        default: []
+    }),
+    (0, mongoose_1.Prop)({ type: [{ type: mongoose_2.Types.ObjectId }], ref: 'Item' }),
     __metadata("design:type", Array)
-], User.prototype, "reward", void 0);
+], User.prototype, "items", void 0);
 exports.User = User = __decorate([
     (0, mongoose_1.Schema)()
 ], User);

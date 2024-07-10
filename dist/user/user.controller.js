@@ -15,11 +15,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserController = void 0;
 const common_1 = require("@nestjs/common");
 const user_service_1 = require("./user.service");
+const user_schema_1 = require("./schema/user.schema");
 const game_data_dto_1 = require("./dto/game-data.dto");
 const auth_service_1 = require("../auth/auth.service");
 const authorize_user_dto_1 = require("../auth/dto/authorize-user-dto");
 const action_service_1 = require("../action/action.service");
 const cache_manager_1 = require("@nestjs/cache-manager");
+const schedule_1 = require("@nestjs/schedule");
+const swagger_1 = require("@nestjs/swagger");
+const user_response_dto_1 = require("./dto/user-response.dto");
 let UserController = class UserController {
     constructor(cache, userService, authService, actionService) {
         this.cache = cache;
@@ -29,19 +33,19 @@ let UserController = class UserController {
     }
     async getProfile(authorizationData) {
         const token = this.authService.authorization(authorizationData);
-        const uid = token.uid;
+        if (!token)
+            throw new common_1.HttpException("Unauth user!", common_1.HttpStatus.UNAUTHORIZED);
         const user = await this.userService.getByUidOrCreate(authorizationData.user);
-        const timestamp_week = this.userService.getTimestampNextWeek();
+        const timestamp_next_week = this.userService.getTimestampNextWeek();
         const leaderboard = await this.cache.get('leaderboard');
-        let response = {
+        return new user_response_dto_1.ProfileResponseDto({
             "timestamp": Date.now(),
             "user": user,
             "data": game_data_dto_1.GameDataInstance,
-            "timestampNextWeek": timestamp_week,
+            "timestampNextWeek": timestamp_next_week,
             "leaderboard": leaderboard,
             "token": token
-        };
-        return response;
+        });
     }
     async getItems(token) {
         this.authService.checkHash(token);
@@ -49,25 +53,28 @@ let UserController = class UserController {
         const user = await this.userService.getByUid(uid);
         if (!user)
             throw new common_1.HttpException("user not found!", common_1.HttpStatus.EXPECTATION_FAILED);
-        return user.reward;
+        return user.items;
     }
-    async getFriendProfiles(uids, token) {
-        this.authService.checkHash(token);
-        const uid = token.uid;
-        if (!uids)
-            throw new Error("Error: uids is empty!");
-        const leaderboard = await this.cache.get('leaderboard');
-        let response = {
-            "timestamp": Date.now(),
-            "leaderboard": leaderboard,
-            "friends": await this.userService.getFriends(uids, this.userService.getTimestampNextWeek())
-        };
-        return response;
+    async updateLeaderboard() {
+        this.userService.createTimestampNextWeek();
+        const leaderboard = await this.userService.createLeaderBoard();
+        await this.cache.set('leaderboard', leaderboard, -1);
+        return;
     }
 };
 exports.UserController = UserController;
 __decorate([
     (0, common_1.Get)('get'),
+    (0, swagger_1.ApiOperation)({ summary: 'Получение профиля юзера' }),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        type: user_response_dto_1.ProfileResponseDto
+    }),
+    (0, swagger_1.ApiParam)({
+        name: 'authorizationData',
+        required: true,
+        description: 'WebAppInitData'
+    }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [authorize_user_dto_1.WebAppInitDataDto]),
@@ -75,19 +82,28 @@ __decorate([
 ], UserController.prototype, "getProfile", null);
 __decorate([
     (0, common_1.Get)("items"),
+    (0, swagger_1.ApiOperation)({ summary: 'Получение списка наград пользователя (не подтвержденых)' }),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        type: [user_schema_1.Item]
+    }),
+    (0, swagger_1.ApiBody)({
+        description: 'Токен для запросов на бекенд',
+        required: true,
+        type: authorize_user_dto_1.TokenDto
+    }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [authorize_user_dto_1.TokenDto]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "getItems", null);
 __decorate([
-    (0, common_1.Get)("friends"),
-    __param(0, (0, common_1.Query)('uids', new common_1.ParseArrayPipe({ items: String, separator: ',' }))),
-    __param(1, (0, common_1.Body)()),
+    (0, schedule_1.Cron)(schedule_1.CronExpression.EVERY_MINUTE),
+    (0, swagger_1.ApiOperation)({ summary: 'Обновление таблицы лидеров по расписанию' }),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Array, authorize_user_dto_1.TokenDto]),
+    __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
-], UserController.prototype, "getFriendProfiles", null);
+], UserController.prototype, "updateLeaderboard", null);
 exports.UserController = UserController = __decorate([
     (0, common_1.Controller)('profile'),
     __param(0, (0, common_1.Inject)(cache_manager_1.CACHE_MANAGER)),

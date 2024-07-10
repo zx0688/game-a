@@ -26,11 +26,6 @@ let TelegramService = class TelegramService {
         this.httpService = httpService;
     }
     async initBot() {
-        bot.on('message', (ctx) => {
-            const chatId = ctx.message.chat.id;
-            bot.telegram.sendMessage(chatId, "234234");
-        });
-        bot.launch();
     }
     async webhook(update) {
         if (update.pre_checkout_query) {
@@ -44,9 +39,9 @@ let TelegramService = class TelegramService {
         }
         else if (update.message.successful_payment && update.message.invoice) {
             const user = await this.userService.getByUid(update.pre_checkout_query.from.id.toString());
-            const reward = new user_schema_1.Reward();
+            const reward = new user_schema_1.Item();
             reward.level = game_data_dto_1.GameDataInstance.levelStars[update.message.successful_payment.total_amount];
-            user.reward.push(reward);
+            user.items.push(reward);
             await user.save();
         }
         return update;

@@ -1,11 +1,7 @@
+import { ApiProperty } from "@nestjs/swagger";
+import { WebAppUserDto } from "src/auth/dto/authorize-user-dto";
 import { User } from "src/user/schema/user.schema";
 
-export class UserDto {
-    id: number;
-    first_name: string;
-    last_name: string;
-    username: string;
-}
 
 export class InvoiceDto {
     title: string;
@@ -13,7 +9,7 @@ export class InvoiceDto {
 
 export class PreCheckoutQuery {
     id: string;
-    from: UserDto;
+    from: WebAppUserDto;
     currency: string;
     total_amount: number;
     invoice_payload: string;
@@ -26,13 +22,23 @@ export class SuccessPaymentDto {
 }
 export class MessageDto {
     message_id: number;
-    from?: UserDto;
+    from?: WebAppUserDto;
     invoice?: InvoiceDto;
     successful_payment?: SuccessPaymentDto;
 }
 
 export class UpdateDto {
+    @ApiProperty({
+        description: "айди сообщения",
+        default: 234
+    })
     update_id: number;
+    @ApiProperty({
+        description: "тело сообщения",
+    })
     message: MessageDto;
+    @ApiProperty({
+        description: "проверка готовности совершить платеж",
+    })
     pre_checkout_query: PreCheckoutQuery;
 }

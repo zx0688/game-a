@@ -1,31 +1,27 @@
 import { Types } from "mongoose";
-import { Reward } from "../schema/user.schema";
-import { UserDto } from "src/telegram/dto/telegram-api-dto";
+import { Coins, Item } from "../schema/user.schema";
 import { WebAppUserDto } from "src/auth/dto/authorize-user-dto";
 
 export class UserCreateDto {
     uid: string;
-    coins: any;
+    user: WebAppUserDto;
+    coins: Coins;
     level: number = 1;
     stars: number = 0;
     timestamp_recovery: number;
     loot_boxes: any;
     quest_completed: string[];
-    reward: Reward[];
-    username: string;
-    photo_url: string;
+    items: Item[];
 
     constructor(data: WebAppUserDto) {
         this.uid = data.id.toString();
-        this.username = data.username;
-        this.photo_url = data.photo_url;
         this.timestamp_recovery = Date.now();
-        this.reward = [];
+        this.user = data;
+        this.items = [];
         this.loot_boxes = {};
         this.quest_completed = [];
-        this.coins = {
-            "coins_per_week": 0,
-            "coins_total": 0
-        }
+        this.coins = new Coins();
+        this.coins.coins_total = 0;
+        this.coins.coins_week = 0;
     }
 }

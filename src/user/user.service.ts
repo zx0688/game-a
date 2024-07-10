@@ -4,13 +4,13 @@ import { UserDocument, User } from './schema/user.schema';
 import { Model } from 'mongoose';
 import { UserCreateDto } from './dto/user-create.dto';
 import { WebAppInitDataDto, WebAppUserDto } from '../auth/dto/authorize-user-dto';
-import { UserDto } from 'src/telegram/dto/telegram-api-dto';
 
 @Injectable()
 export class UserService {
 
     constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) { }
 
+    private timeStampNextWeek: number = null;
 
     async getByUid(uid: string): Promise<UserDocument | null> {
         try {
@@ -25,7 +25,7 @@ export class UserService {
             const uid = userDto.id.toString();
             let user: User = await this.userModel.findOne({ uid }).exec();
             if (!user) {
-                user = await this.createAndSaveUser(userDto);
+                user = await this.createUser(userDto);
             }
             return user;
         } catch (error) {
@@ -34,37 +34,29 @@ export class UserService {
     }
 
     async createLeaderBoard(): Promise<any> {
-
-        const total = await this.userModel
-            .find({})
-            .sort({ "coins.coins_total": -1 })
-            .limit(10)
-            .select("username uid _id photo_url coins")
-            .lean()
-            .exec();
-        const week = await this.userModel
-            .find({})
-            .sort({ "coins.coins_week": -1 })
-            .limit(10)
-            .select("username uid _id photo_url coins")
-            .lean()
-            .exec()
-
+        let total, week;
+        try {
+            total = await this.userModel
+                .find({})
+                .sort({ "coins.coins_total": -1 })
+                .limit(10)
+                .select("user coins")
+                .lean()
+                .exec();
+            week = await this.userModel
+                .find({})
+                .sort({ "coins.coins_week": -1 })
+                .limit(10)
+                .select("user coins")
+                .lean()
+                .exec();
+        }
+        catch (error) {
+            throw new HttpException(`Error sorting users ${error}`, HttpStatus.NOT_FOUND);
+        }
         return {
-            total: total.map(user => ({
-                username: user.username,
-                uid: user.uid,
-                _id: user._id,
-                photo_url: user.photo_url,
-                coins: user.coins
-            })),
-            week: week.map(user => ({
-                username: user.username,
-                uid: user.uid,
-                _id: user._id,
-                photo_url: user.photo_url,
-                coins: user.coins
-            }))
+            total: total,
+            week: week
         };
     }
 
@@ -83,13 +75,20 @@ export class UserService {
     }
 
     public getTimestampNextWeek(): number {
+        if (!this.timeStampNextWeek)
+            this.createTimestampNextWeek();
+        return this.timeStampNextWeek;
+    }
+
+    public createTimestampNextWeek(): number {
         const now = new Date();
         const startOfNextWeek = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 7);
-        return startOfNextWeek.getTime();
+        this.timeStampNextWeek = startOfNextWeek.getTime();
+        return this.timeStampNextWeek;
     }
 
 
-    private async createAndSaveUser(user: WebAppUserDto): Promise<UserDocument> {
+    private async createUser(user: WebAppUserDto): Promise<UserDocument> {
         try {
             const newUser = new this.userModel(new UserCreateDto(user));
             newUser.timestamp = Date.now();

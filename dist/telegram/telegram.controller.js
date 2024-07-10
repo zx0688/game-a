@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const telegram_api_dto_1 = require("./dto/telegram-api-dto");
 const telegram_service_1 = require("./telegram.service");
 const cache_manager_1 = require("@nestjs/cache-manager");
+const swagger_1 = require("@nestjs/swagger");
 let TelegramController = class TelegramController {
     constructor(cache, telegramService) {
         this.cache = cache;
@@ -34,6 +35,16 @@ let TelegramController = class TelegramController {
 exports.TelegramController = TelegramController;
 __decorate([
     (0, common_1.Get)("webhook"),
+    (0, swagger_1.ApiOperation)({ summary: 'вебхук для платежей' }),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        type: telegram_api_dto_1.UpdateDto,
+    }),
+    (0, swagger_1.ApiBody)({
+        description: 'Сообщения платформы',
+        required: true,
+        type: telegram_api_dto_1.UpdateDto
+    }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [telegram_api_dto_1.UpdateDto]),

@@ -16,6 +16,7 @@ exports.AuthController = void 0;
 const common_1 = require("@nestjs/common");
 const authorize_user_dto_1 = require("./dto/authorize-user-dto");
 const auth_service_1 = require("./auth.service");
+const swagger_1 = require("@nestjs/swagger");
 let AuthController = class AuthController {
     constructor(authService) {
         this.authService = authService;
@@ -27,6 +28,16 @@ let AuthController = class AuthController {
 exports.AuthController = AuthController;
 __decorate([
     (0, common_1.Get)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Запрос авторизации на игровом сервере, например, если срок токен истек' }),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        type: authorize_user_dto_1.TokenDto,
+    }),
+    (0, swagger_1.ApiParam)({
+        name: 'authorizationData',
+        required: true,
+        description: 'WebAppInitData'
+    }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [authorize_user_dto_1.WebAppInitDataDto]),

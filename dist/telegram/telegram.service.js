@@ -18,7 +18,7 @@ const game_data_dto_1 = require("../user/dto/game-data.dto");
 const user_schema_1 = require("../user/schema/user.schema");
 const telegraf_1 = require("telegraf");
 exports.botToken = "7373260082:AAEHUW41sZeLIy8z2wy29j0nxXl-F0Hchsc";
-exports.webhookUrl = `https://localhost:8443/telegram/webhook`;
+exports.webhookUrl = `https://5.159.103.206:8443/telegram/webhook`;
 const bot = new telegraf_1.Telegraf(exports.botToken);
 let TelegramService = class TelegramService {
     constructor(userService, httpService) {

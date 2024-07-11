@@ -10,7 +10,7 @@ import { Telegraf } from 'telegraf';
 
 
 export const botToken = "7373260082:AAEHUW41sZeLIy8z2wy29j0nxXl-F0Hchsc";
-export const webhookUrl = `https://localhost:8443/telegram/webhook`
+export const webhookUrl = `https://5.159.103.206:8443/telegram/webhook`
 const bot = new Telegraf(botToken);
 
 @Injectable()

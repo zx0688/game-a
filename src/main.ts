@@ -2,12 +2,19 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { TelegramService } from './telegram/telegram.service';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import * as fs from 'fs'
+
+export const httpsOptions = {
+  key: fs.readFileSync('./secrets/cert.key'),
+  cert: fs.readFileSync('./secrets/cert.crt'),
+};
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
-    cors: true
+    httpsOptions
   });
-  app.enableCors();
+
+
   // app.enableCors({
   //   origin: '*',
   //   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',

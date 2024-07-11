@@ -11,8 +11,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthService = void 0;
 const common_1 = require("@nestjs/common");
-const crypto_1 = require("crypto");
 const user_service_1 = require("../user/user.service");
+const crypto_1 = require("crypto");
 const crypto_js_1 = require("./dto/crypto-js");
 let AuthService = class AuthService {
     constructor(userService) {
@@ -34,7 +34,7 @@ let AuthService = class AuthService {
         };
     }
     createHash(uid, expire) {
-        return (0, crypto_1.createHash)('sha256').update(`${uid}${expire}E|9No|6owY$FmqrH$V08~`).digest('hex');
+        return (0, crypto_1.createHmac)('sha256', "E|9No|6owY$FmqrH$V08~").update(`${uid}${expire}`).digest('hex');
     }
     checkHash(token) {
         if (!token || !token.uid)

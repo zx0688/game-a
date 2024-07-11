@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Request, UnauthorizedException, Query, ParseArrayPipe, Body, HttpStatus, HttpException, ValidationPipe, UsePipes, Inject } from '@nestjs/common';
+import { Controller, Get, Param, Request, UnauthorizedException, Query, ParseArrayPipe, Body, HttpStatus, HttpException, ValidationPipe, UsePipes, Inject, Post } from '@nestjs/common';
 import { UserService } from './user.service';
 import { Item, User } from './schema/user.schema';
 import { GameDataInstance } from './dto/game-data.dto';
@@ -20,7 +20,7 @@ export class UserController {
         private authService: AuthService,
         private actionService: ActionService) { }
 
-    @Get('get')
+    @Post("get")
     @ApiOperation({ summary: 'Получение профиля юзера' })
     @ApiResponse({
         status: 200,
@@ -41,8 +41,7 @@ export class UserController {
         const user = await this.userService.getByUidOrCreate(authorizationData.user);
         const timestamp_next_week = this.userService.getTimestampNextWeek();
         const leaderboard = await this.cache.get('leaderboard');
-
-        return new ProfileResponseDto({
+        const resp = new ProfileResponseDto({
             "timestamp": Date.now(),
             "user": user,
             "data": GameDataInstance,
@@ -50,6 +49,7 @@ export class UserController {
             "leaderboard": leaderboard as LeaderBoardDto,
             "token": token
         });
+        return resp;
     }
 
     @Get("items")

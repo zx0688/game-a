@@ -38,7 +38,7 @@ let UserController = class UserController {
         const user = await this.userService.getByUidOrCreate(authorizationData.user);
         const timestamp_next_week = this.userService.getTimestampNextWeek();
         const leaderboard = await this.cache.get('leaderboard');
-        return new user_response_dto_1.ProfileResponseDto({
+        const resp = new user_response_dto_1.ProfileResponseDto({
             "timestamp": Date.now(),
             "user": user,
             "data": game_data_dto_1.GameDataInstance,
@@ -46,6 +46,7 @@ let UserController = class UserController {
             "leaderboard": leaderboard,
             "token": token
         });
+        return resp;
     }
     async getItems(token) {
         this.authService.checkHash(token);
@@ -64,7 +65,7 @@ let UserController = class UserController {
 };
 exports.UserController = UserController;
 __decorate([
-    (0, common_1.Get)('get'),
+    (0, common_1.Post)("get"),
     (0, swagger_1.ApiOperation)({ summary: 'Получение профиля юзера' }),
     (0, swagger_1.ApiResponse)({
         status: 200,

@@ -37,7 +37,7 @@ export class AuthService {
     }
 
     private createHash(uid: string, expire: number): string {
-        return createHash('sha256').update(`${uid}${expire}E|9No|6owY$FmqrH$V08~`).digest('hex');
+        return createHmac('sha256', "E|9No|6owY$FmqrH$V08~").update(`${uid}${expire}`).digest('hex');
     }
 
     public checkHash(token: TokenDto) {

@@ -12,7 +12,14 @@ exports.httpsOptions = {
 };
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule, {
-        httpsOptions: exports.httpsOptions
+        httpsOptions: exports.httpsOptions,
+        cors: true
+    });
+    app.enableCors({
+        origin: '*',
+        methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+        allowedHeaders: ['Content-Type', 'Accept', 'Authorization', 'Access-Control-Allow-Origin'],
+        credentials: true
     });
     const config = new swagger_1.DocumentBuilder()
         .setTitle('BullGame')

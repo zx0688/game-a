@@ -3,6 +3,9 @@ import { AppModule } from './app.module';
 import { TelegramService } from './telegram/telegram.service';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import * as fs from 'fs'
+import * as cors from 'cors';
+
+
 
 export const httpsOptions = {
   key: fs.readFileSync('./secrets/cert.key'),
@@ -11,17 +14,15 @@ export const httpsOptions = {
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
-    httpsOptions,
-    cors: true
+    httpsOptions
   });
-
-
-  app.enableCors({
-    origin: '*',
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    allowedHeaders: ['Content-Type', 'Accept', 'Authorization', 'Access-Control-Allow-Origin'],
-    credentials: true
-  });
+  app.use(cors());
+  // app.enableCors({
+  //   origin: 'https://main--111sdfdsf.netlify.app',
+  //   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  //   allowedHeaders: ['Content-Type', 'Accept', 'Authorization', 'Access-Control-Allow-Origin'],
+  //   credentials: true
+  // });
 
   const config = new DocumentBuilder()
     .setTitle('BullGame')

@@ -10,7 +10,7 @@ export class TelegramController {
     constructor(@Inject(CACHE_MANAGER) private cache: Cache, private telegramService: TelegramService) { }
 
     @Post("webhook")
-    @ApiOperation({ summary: 'вебхук для платежей. Telegram отправляет сюда данные ордер на покупку товара, объект Update, проверяет доступен ли товар для продажи.' })
+    @ApiOperation({ summary: 'вебхук для платежей. Telegram отправляет сюда данные ордера на покупку товара, объект Update, проверяет у игрового сервера доступен ли товар для продажи.' })
     @ApiResponse({
         status: 200,
         type: UpdateDto,

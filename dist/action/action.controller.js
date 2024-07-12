@@ -72,7 +72,7 @@ let ActionController = class ActionController {
 exports.ActionController = ActionController;
 __decorate([
     (0, common_1.Post)("collect"),
-    (0, swagger_1.ApiOperation)({ summary: 'Сбор монет. Запрос отправляется каждый раз при сборе монет' }),
+    (0, swagger_1.ApiOperation)({ summary: 'Сбор монет. Запрос отправляется каждый раз при сборе монет, требует игровой токен который выдается profile/get' }),
     (0, swagger_1.ApiResponse)({
         status: 200,
         type: action_response_dto_1.ActionResponseDto
@@ -95,7 +95,7 @@ __decorate([
 ], ActionController.prototype, "collect", null);
 __decorate([
     (0, common_1.Post)("quest"),
-    (0, swagger_1.ApiOperation)({ summary: 'Выполнить задание. Отправить этот запрос при просмотре рекламы или любого другого задания. Задание можно выполнить только один раз. Если у задания есть награда, она добавляется в список ожидающих. Запрос ожидающих наград profile/items. Подтверждение награды action/accept' }),
+    (0, swagger_1.ApiOperation)({ summary: 'Выполнить задание. Требует игровой токен от profile/get. Отправить этот запрос при просмотре рекламы или любого другого задания. Задание можно выполнить только один раз. Если у задания есть награда, она добавляется в список ожидающих. Запрос ожидающих наград profile/items. Подтверждение награды action/accept' }),
     (0, swagger_1.ApiResponse)({
         status: 200,
         type: action_response_dto_1.ActionResponseDto
@@ -118,7 +118,7 @@ __decorate([
 ], ActionController.prototype, "quest", null);
 __decorate([
     (0, common_1.Post)("accept"),
-    (0, swagger_1.ApiOperation)({ summary: 'Получить ожидающую награду или товар. После выполнения ордера или задания, награда добавляется в список наград, которые необходимо получить этим методом' }),
+    (0, swagger_1.ApiOperation)({ summary: 'Получить ожидающую награду или товар. Требует игровой токен полученный profile/get. После выполнения ордера или задания, награда добавляется в список наград, которые необходимо получить этим методом' }),
     (0, swagger_1.ApiResponse)({
         status: 200,
         type: action_response_dto_1.ActionResponseDto

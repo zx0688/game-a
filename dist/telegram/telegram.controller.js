@@ -35,7 +35,7 @@ let TelegramController = class TelegramController {
 exports.TelegramController = TelegramController;
 __decorate([
     (0, common_1.Post)("webhook"),
-    (0, swagger_1.ApiOperation)({ summary: 'вебхук для платежей. Telegram отправляет сюда данные ордер на покупку товара, объект Update, проверяет доступен ли товар для продажи.' }),
+    (0, swagger_1.ApiOperation)({ summary: 'вебхук для платежей. Telegram отправляет сюда данные ордера на покупку товара, объект Update, проверяет у игрового сервера доступен ли товар для продажи.' }),
     (0, swagger_1.ApiResponse)({
         status: 200,
         type: telegram_api_dto_1.UpdateDto,

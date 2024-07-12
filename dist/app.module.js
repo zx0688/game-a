@@ -16,7 +16,7 @@ const action_module_1 = require("./action/action.module");
 const telegram_module_1 = require("./telegram/telegram.module");
 const cache_manager_1 = require("@nestjs/cache-manager");
 const schedule_1 = require("@nestjs/schedule");
-exports.uri = "mongodb+srv://root:root@cluster0.y6mrt.mongodb.net/game-test1?retryWrites=true&w=majority";
+exports.uri = "mongodb+srv://root:jFIIcBYnEGCURs7k@cluster0.y6mrt.mongodb.net/game-test1?retryWrites=true&w=majority";
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;

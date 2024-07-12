@@ -21,7 +21,9 @@ export class UserController {
         private actionService: ActionService) { }
 
     @Post("get")
-    @ApiOperation({ summary: 'Получение профиля юзера' })
+    @ApiOperation({
+        summary: "Получение профиля юзера. Запрашивается один раз в начале игровой сессии. В теле запроса объект Telegram WebAppInitData. Если профиля нет, он создается. Возвращает Игровой объект User, содержащий количество монет, уровень, звезды. Возвращает игровые данные, стоимость звез на уровень, лоты (товары). Возвращает время следующей недели и таблицу лидеров."
+    })
     @ApiResponse({
         status: 200,
         type: ProfileResponseDto
@@ -52,8 +54,8 @@ export class UserController {
         return resp;
     }
 
-    @Get("items")
-    @ApiOperation({ summary: 'Получение списка наград пользователя (не подтвержденых)' })
+    @Post("items")
+    @ApiOperation({ summary: 'Получение списка наград пользователя. Для запроса нужен игровой токен от profile/get. Все неподтвержденые награды и покупки. Для фактического начисления награды на счет необходимо вызывать метод Accept. Последовательность запросов такая: 1. Покупка (просмотр рекламы) 2. Вызов этого запроса по успешному колбеку 3. Подтверждение награды методом Accept - здесь уже можно показать анимацию выдачи' })
     @ApiResponse({
         status: 200,
         type: [Item]
@@ -74,8 +76,8 @@ export class UserController {
         return user.items;
     }
 
-    @Cron(CronExpression.EVERY_MINUTE)
-    @ApiOperation({ summary: 'Обновление таблицы лидеров по расписанию' })
+    @Cron(CronExpression.EVERY_2_HOURS)
+    @ApiOperation({ summary: 'Обновление таблицы лидеров по расписанию, раз в 2 часа' })
     async updateLeaderboard(): Promise<void> {
         this.userService.createTimestampNextWeek();
         const leaderboard = await this.userService.createLeaderBoard();

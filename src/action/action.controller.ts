@@ -21,8 +21,8 @@ export class ActionController {
         private authService: AuthService) { }
 
 
-    @Get("collect")
-    @ApiOperation({ summary: 'Сбор монет' })
+    @Post("collect")
+    @ApiOperation({ summary: 'Сбор монет. Запрос отправляется каждый раз при сборе монет' })
     @ApiResponse({
         status: 200,
         type: ActionResponseDto
@@ -59,8 +59,8 @@ export class ActionController {
         //return await this.handleAction(token.uid, user => this.actionService.collect(user, value));
     }
 
-    @Get("quest")
-    @ApiOperation({ summary: 'Выполнить задание' })
+    @Post("quest")
+    @ApiOperation({ summary: 'Выполнить задание. Отправить этот запрос при просмотре рекламы или любого другого задания. Задание можно выполнить только один раз. Если у задания есть награда, она добавляется в список ожидающих. Запрос ожидающих наград profile/items. Подтверждение награды action/accept' })
     @ApiResponse({
         status: 200,
         type: ActionResponseDto
@@ -84,8 +84,8 @@ export class ActionController {
         return new ActionResponseDto(response);
     }
 
-    @Get("accept")
-    @ApiOperation({ summary: 'Получить награду' })
+    @Post("accept")
+    @ApiOperation({ summary: 'Получить ожидающую награду или товар. После выполнения ордера или задания, награда добавляется в список наград, которые необходимо получить этим методом' })
     @ApiResponse({
         status: 200,
         type: ActionResponseDto

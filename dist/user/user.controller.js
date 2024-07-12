@@ -66,7 +66,9 @@ let UserController = class UserController {
 exports.UserController = UserController;
 __decorate([
     (0, common_1.Post)("get"),
-    (0, swagger_1.ApiOperation)({ summary: 'Получение профиля юзера' }),
+    (0, swagger_1.ApiOperation)({
+        summary: "Получение профиля юзера. Запрашивается один раз в начале игровой сессии. В теле запроса объект Telegram WebAppInitData. Если профиля нет, он создается. Возвращает Игровой объект User, содержащий количество монет, уровень, звезды. Возвращает игровые данные, стоимость звез на уровень, лоты (товары). Возвращает время следующей недели и таблицу лидеров."
+    }),
     (0, swagger_1.ApiResponse)({
         status: 200,
         type: user_response_dto_1.ProfileResponseDto
@@ -82,8 +84,8 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "getProfile", null);
 __decorate([
-    (0, common_1.Get)("items"),
-    (0, swagger_1.ApiOperation)({ summary: 'Получение списка наград пользователя (не подтвержденых)' }),
+    (0, common_1.Post)("items"),
+    (0, swagger_1.ApiOperation)({ summary: 'Получение списка наград пользователя. Для запроса нужен игровой токен от profile/get. Все неподтвержденые награды и покупки. Для фактического начисления награды на счет необходимо вызывать метод Accept. Последовательность запросов такая: 1. Покупка (просмотр рекламы) 2. Вызов этого запроса по успешному колбеку 3. Подтверждение награды методом Accept - здесь уже можно показать анимацию выдачи' }),
     (0, swagger_1.ApiResponse)({
         status: 200,
         type: [user_schema_1.Item]
@@ -99,8 +101,8 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "getItems", null);
 __decorate([
-    (0, schedule_1.Cron)(schedule_1.CronExpression.EVERY_MINUTE),
-    (0, swagger_1.ApiOperation)({ summary: 'Обновление таблицы лидеров по расписанию' }),
+    (0, schedule_1.Cron)(schedule_1.CronExpression.EVERY_2_HOURS),
+    (0, swagger_1.ApiOperation)({ summary: 'Обновление таблицы лидеров по расписанию, раз в 2 часа' }),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)

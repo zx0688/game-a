@@ -27,8 +27,8 @@ let AuthController = class AuthController {
 };
 exports.AuthController = AuthController;
 __decorate([
-    (0, common_1.Get)(),
-    (0, swagger_1.ApiOperation)({ summary: 'Запрос авторизации на игровом сервере, например, если срок токен истек' }),
+    (0, common_1.Post)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Запрос авторизации на игровом сервере, например, если срок игрового токена истек. Profile/Get выдает токен после успешной авторизации в Telegram. С этим токеном нужно делать запросы на игровой сервер. Если токен истек его нужно перезапрашивать этим методом' }),
     (0, swagger_1.ApiResponse)({
         status: 200,
         type: authorize_user_dto_1.TokenDto,

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Inject } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Post } from '@nestjs/common';
 import { UpdateDto } from './dto/telegram-api-dto';
 import { TelegramService } from './telegram.service';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
@@ -9,8 +9,8 @@ import { ApiBody, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
 export class TelegramController {
     constructor(@Inject(CACHE_MANAGER) private cache: Cache, private telegramService: TelegramService) { }
 
-    @Get("webhook")
-    @ApiOperation({ summary: 'вебхук для платежей' })
+    @Post("webhook")
+    @ApiOperation({ summary: 'вебхук для платежей. Telegram отправляет сюда данные ордер на покупку товара, объект Update, проверяет доступен ли товар для продажи.' })
     @ApiResponse({
         status: 200,
         type: UpdateDto,

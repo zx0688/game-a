@@ -99,10 +99,8 @@ let UserService = UserService_1 = class UserService {
     }
     async createUser(user) {
         try {
-            const newUser = new this.userModel(new user_create_dto_1.UserCreateDto(user));
-            newUser.timestamp = Date.now();
-            const savedUser = await newUser.save();
-            return savedUser;
+            const createdUser = await this.userModel.create(new user_create_dto_1.UserCreateDto(user));
+            return createdUser;
         }
         catch (error) {
             throw new Error(`Error creating user: ${error.message}`);

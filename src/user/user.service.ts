@@ -95,10 +95,8 @@ export class UserService {
 
     private async createUser(user: WebAppUserDto): Promise<UserDocument> {
         try {
-            const newUser = new this.userModel(new UserCreateDto(user));
-            newUser.timestamp = Date.now();
-            const savedUser = await newUser.save();
-            return savedUser;
+            const createdUser = await this.userModel.create(new UserCreateDto(user));
+            return createdUser;
         } catch (error) {
             throw new Error(`Error creating user: ${error.message}`);
         }

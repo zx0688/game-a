@@ -27,7 +27,7 @@ export class TelegramService {
                 title: 'Test Product',
                 description: 'This is a test product',
                 payload: 'test_payload',
-                provider_token: null,
+                provider_token: "",
                 currency: 'USD',
                 prices: [{ label: 'Test Product', amount: 1000 }],
                 start_parameter: 'test-payment',

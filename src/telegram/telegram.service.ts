@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { Observable, catchError, lastValueFrom, map, throwError } from 'rxjs';
 import { AxiosResponse } from 'axios'
 import { HttpModule, HttpService } from '@nestjs/axios';
@@ -20,6 +20,18 @@ export class TelegramService {
     async initBot() {
 
         bot.start((ctx) => ctx.reply('Welcome!'));
+        bot.on('pre_checkout_query', (ctx) => {
+            // Проверка платежа
+            ctx.answerPreCheckoutQuery(true);
+            Logger.log("precheck" + JSON.stringify(ctx));
+        });
+
+        // Обработка успешных платежей
+        bot.on('successful_payment', (ctx) => {
+            // Выдача продукта
+            ctx.reply('Спасибо за покупку! Вот ваш продукт.');
+            Logger.log("suc" + JSON.stringify(ctx));
+        });
 
         bot.command('pay', (ctx) => {
             ctx.reply('Welcome!');

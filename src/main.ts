@@ -10,20 +10,20 @@ import { UserController } from './user/user.controller';
 
 
 
-export const httpsOptions = {
-  key: fs.readFileSync('./secrets/cert.key'),
-  cert: fs.readFileSync('./secrets/cert.crt'),
-};
+// export const httpsOptions = {
+//   key: fs.readFileSync('./secrets/cert.key'),
+//   cert: fs.readFileSync('./secrets/cert.crt'),
+// };
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { httpsOptions });
-  app.use(cors());
-  app.enableCors({
-    origin: '*',
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    allowedHeaders: ['Content-Type', 'Accept', 'Authorization', 'Access-Control-Allow-Origin'],
-    credentials: true
-  });
+  const app = await NestFactory.create(AppModule);
+  //app.use(cors());
+  // app.enableCors({
+  //   origin: '*',
+  //   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  //   allowedHeaders: ['Content-Type', 'Accept', 'Authorization', 'Access-Control-Allow-Origin'],
+  //   credentials: true
+  // });
 
   const config = new DocumentBuilder()
     .setTitle('BullGame')

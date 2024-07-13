@@ -14,6 +14,9 @@ export class LeaderBoardDto {
         default: []
     })
     week: UserLeaderDto[];
+    constructor(partial: Partial<LeaderBoardDto>) {
+        Object.assign(this, partial);
+    }
 };
 
 export class UserLeaderDto {
@@ -25,6 +28,9 @@ export class UserLeaderDto {
         description: "монеты пользоватля",
     })
     coins: Coins;
+    constructor(partial: Partial<UserLeaderDto>) {
+        Object.assign(this, partial);
+    }
 };
 
 

@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Request, UnauthorizedException, Query, ParseArrayPipe, Body, HttpStatus, HttpException, ValidationPipe, UsePipes, Inject, Post } from '@nestjs/common';
+import { Controller, Get, Param, Request, UnauthorizedException, Query, ParseArrayPipe, Body, HttpStatus, HttpException, ValidationPipe, UsePipes, Inject, Post, Logger } from '@nestjs/common';
 import { UserService } from './user.service';
 import { Item, User } from './schema/user.schema';
 import { GameDataInstance } from './dto/game-data.dto';
@@ -43,6 +43,7 @@ export class UserController {
         const user = await this.userService.getByUidOrCreate(authorizationData.user);
         const timestamp_next_week = this.userService.getTimestampNextWeek();
         const leaderboard = await this.cache.get('leaderboard');
+        Logger.log(leaderboard);
         const resp = new ProfileResponseDto({
             "timestamp": Date.now(),
             "user": user,

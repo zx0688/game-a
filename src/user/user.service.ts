@@ -4,6 +4,7 @@ import { UserDocument, User } from './schema/user.schema';
 import { Model } from 'mongoose';
 import { UserCreateDto } from './dto/user-create.dto';
 import { WebAppInitDataDto, WebAppUserDto } from '../auth/dto/authorize-user-dto';
+import { LeaderBoardDto, UserLeaderDto } from './dto/user-response.dto';
 
 @Injectable()
 export class UserService {
@@ -33,7 +34,7 @@ export class UserService {
         }
     }
 
-    async createLeaderBoard(): Promise<any> {
+    async createLeaderBoard(): Promise<LeaderBoardDto> {
         let total, week;
         try {
             total = await this.userModel
@@ -54,10 +55,10 @@ export class UserService {
         catch (error) {
             throw new HttpException(`Error sorting users ${error}`, HttpStatus.NOT_FOUND);
         }
-        return {
-            total: total,
-            week: week
-        };
+        return new LeaderBoardDto({
+            total: total.map(u => new UserLeaderDto({ user: u.user, coins: u.coins })),
+            week: week.map(u => new UserLeaderDto({ user: u.user, coins: u.coins }))
+        });
     }
 
     async findUsersByIds(uids: string[]): Promise<UserDocument[]> {

@@ -76,9 +76,10 @@ export class UserController {
         return user.items;
     }
 
-    @Cron(CronExpression.EVERY_2_HOURS)
+    @Cron(CronExpression.EVERY_MINUTE)
     @ApiOperation({ summary: 'Обновление таблицы лидеров по расписанию, раз в 2 часа' })
     async updateLeaderboard(): Promise<void> {
+        Logger.log("Обновление таблицы лидеров");
         this.userService.createTimestampNextWeek();
         const leaderboard = await this.userService.createLeaderBoard();
         return;

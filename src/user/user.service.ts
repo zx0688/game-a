@@ -43,14 +43,14 @@ export class UserService {
                 .find({})
                 .sort({ "coins.coins_total": -1 })
                 .limit(10)
-                .select("user coins")
+                .select("user.user coins")
                 .lean()
                 .exec();
             week = await this.userModel
                 .find({})
                 .sort({ "coins.coins_week": -1 })
                 .limit(10)
-                .select("user coins")
+                .select("user.user coins")
                 .lean()
                 .exec();
         }

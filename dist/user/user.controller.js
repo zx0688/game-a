@@ -56,6 +56,7 @@ let UserController = class UserController {
         return user.items;
     }
     async updateLeaderboard() {
+        common_1.Logger.log("Обновление таблицы лидеров");
         this.userService.createTimestampNextWeek();
         const leaderboard = await this.userService.createLeaderBoard();
         return;
@@ -99,7 +100,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "getItems", null);
 __decorate([
-    (0, schedule_1.Cron)(schedule_1.CronExpression.EVERY_2_HOURS),
+    (0, schedule_1.Cron)(schedule_1.CronExpression.EVERY_MINUTE),
     (0, swagger_1.ApiOperation)({ summary: 'Обновление таблицы лидеров по расписанию, раз в 2 часа' }),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),

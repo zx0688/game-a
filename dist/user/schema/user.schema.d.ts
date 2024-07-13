@@ -10,7 +10,7 @@ export declare class Item {
     coins?: number;
     level?: number;
     stars?: number;
-    constructor();
+    constructor(partial?: Partial<Item>);
 }
 export declare class User {
     uid: string;

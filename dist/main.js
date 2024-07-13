@@ -6,8 +6,14 @@ const telegram_service_1 = require("./telegram/telegram.service");
 const swagger_1 = require("@nestjs/swagger");
 const cors = require("cors");
 async function bootstrap() {
-    const app = await core_1.NestFactory.create(app_module_1.AppModule, {});
+    const app = await core_1.NestFactory.create(app_module_1.AppModule);
     app.use(cors());
+    app.enableCors({
+        origin: '*',
+        methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+        allowedHeaders: ['Content-Type', 'Accept', 'Authorization', 'Access-Control-Allow-Origin'],
+        credentials: true
+    });
     const config = new swagger_1.DocumentBuilder()
         .setTitle('BullGame')
         .setDescription('The Game Bui=ll API description')

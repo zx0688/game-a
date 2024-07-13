@@ -39,7 +39,9 @@ export class Item {
         description: "звезд в награде",
     })
     stars?: number;
-    constructor() {
+    constructor(partial: Partial<Item> = null) {
+        if (partial != null)
+            Object.assign(this, partial);
         this.id = new mongoose.Types.ObjectId().toString();
     }
 }

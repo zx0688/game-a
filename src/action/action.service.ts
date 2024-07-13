@@ -44,8 +44,7 @@ export class ActionService {
             throw new HttpException(`Error: quest ${value} already completed`, HttpStatus.EXPECTATION_FAILED);
 
         user.quest_completed.push(value);
-        var reward = new Item();
-        reward.coins = GameDataInstance.quests[value];
+        var reward = new Item(GameDataInstance.quests[value]);
         user.items.push(reward);
         await user.save();
         return user.items;

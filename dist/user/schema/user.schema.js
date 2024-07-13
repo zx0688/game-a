@@ -32,7 +32,9 @@ __decorate([
     __metadata("design:type", Number)
 ], Coins.prototype, "coins_week", void 0);
 let Item = class Item {
-    constructor() {
+    constructor(partial = null) {
+        if (partial != null)
+            Object.assign(this, partial);
         this.id = new mongoose_2.default.Types.ObjectId().toString();
     }
 };
@@ -64,7 +66,7 @@ __decorate([
 ], Item.prototype, "stars", void 0);
 exports.Item = Item = __decorate([
     (0, mongoose_1.Schema)(),
-    __metadata("design:paramtypes", [])
+    __metadata("design:paramtypes", [Object])
 ], Item);
 let User = class User {
 };

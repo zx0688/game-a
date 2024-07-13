@@ -14,9 +14,10 @@ const swagger_1 = require("@nestjs/swagger");
 class GameDataDto {
     constructor() {
         this.levelStars = levelStars;
+        this.durationRecovery = 34;
         this.referral = referral;
         this.referralBonus = referralBonus;
-        this.quests = viralQuestReward;
+        this.quests = questReward;
     }
 }
 exports.GameDataDto = GameDataDto;
@@ -26,6 +27,12 @@ __decorate([
     }),
     __metadata("design:type", Object)
 ], GameDataDto.prototype, "levelStars", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        description: "время восстановления"
+    }),
+    __metadata("design:type", Number)
+], GameDataDto.prototype, "durationRecovery", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({
         description: "рефералы"
@@ -65,9 +72,9 @@ const referral = {
 const referralBonus = {
     "1": 15
 };
-const viralQuestReward = {
-    "3423324": 150,
-    "543354": 200
+const questReward = {
+    "login": { coins: 234 },
+    "543354": { coins: 33 }
 };
 exports.GameDataInstance = new GameDataDto();
 //# sourceMappingURL=game-data.dto.js.map

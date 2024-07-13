@@ -1,10 +1,16 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { Item } from "../schema/user.schema";
 
 export class GameDataDto {
     @ApiProperty({
         description: "продажа звез за уровень"
     })
     readonly levelStars = levelStars;
+
+    @ApiProperty({
+        description: "время восстановления"
+    })
+    readonly durationRecovery: Number = 34;
     @ApiProperty({
         description: "рефералы"
     })
@@ -16,7 +22,7 @@ export class GameDataDto {
     @ApiProperty({
         description: "задания"
     })
-    readonly quests = viralQuestReward;
+    readonly quests = questReward;
 
 }
 
@@ -47,10 +53,10 @@ const referralBonus =
 };
 
 //монеты награда за выполнение квеста
-const viralQuestReward =
+const questReward =
 {
-    "3423324": 150,
-    "543354": 200
+    "login": { coins: 234 },
+    "543354": { coins: 33 }
 };
 
 export const GameDataInstance = new GameDataDto();

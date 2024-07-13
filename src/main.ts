@@ -13,14 +13,14 @@ import * as cors from 'cors';
 // };
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {});
+  const app = await NestFactory.create(AppModule);
   app.use(cors());
-  // app.enableCors({
-  //   origin: 'https://main--111sdfdsf.netlify.app',
-  //   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  //   allowedHeaders: ['Content-Type', 'Accept', 'Authorization', 'Access-Control-Allow-Origin'],
-  //   credentials: true
-  // });
+  app.enableCors({
+    origin: '*',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    allowedHeaders: ['Content-Type', 'Accept', 'Authorization', 'Access-Control-Allow-Origin'],
+    credentials: true
+  });
 
   const config = new DocumentBuilder()
     .setTitle('BullGame')

@@ -54,8 +54,7 @@ let ActionService = class ActionService {
         if (user.quest_completed.includes(value))
             throw new common_1.HttpException(`Error: quest ${value} already completed`, common_1.HttpStatus.EXPECTATION_FAILED);
         user.quest_completed.push(value);
-        var reward = new user_schema_1.Item();
-        reward.coins = game_data_dto_1.GameDataInstance.quests[value];
+        var reward = new user_schema_1.Item(game_data_dto_1.GameDataInstance.quests[value]);
         user.items.push(reward);
         await user.save();
         return user.items;

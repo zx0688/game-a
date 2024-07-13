@@ -24,13 +24,8 @@ let TelegramService = class TelegramService {
         this.httpService = httpService;
     }
     async initBot() {
-        bot.launch({
-            webhook: {
-                domain: "https://5.159.103.206",
-                port: 8443,
-                path: "/telegram/webhook",
-            },
-        });
+        bot.launch();
+        await bot.createWebhook({ domain: "https://5.159.103.206:8443/telegram/webhook" });
     }
     async webhook(update) {
         if (update.pre_checkout_query) {

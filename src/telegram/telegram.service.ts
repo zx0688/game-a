@@ -19,20 +19,8 @@ export class TelegramService {
 
     async initBot() {
 
-        bot.launch({
-            webhook: {
-                // Public domain for webhook; e.g.: example.com
-                domain: "https://5.159.103.206",
-
-                // Port to listen on; e.g.: 8080
-                port: 8443,
-                // Optional path to listen for.
-                // `bot.secretPathComponent()` will be used by default
-                path: "/telegram/webhook",
-
-            },
-        });
-
+        bot.launch();
+        await bot.createWebhook({ domain: "https://5.159.103.206:8443/telegram/webhook" });
     }
 
     async webhook(update: UpdateDto): Promise<UpdateDto | null> {

@@ -82,6 +82,7 @@ export class UserController {
         this.userService.createTimestampNextWeek();
         const leaderboard = await this.userService.createLeaderBoard();
         await this.cache.set('leaderboard', leaderboard, -1);
+
         return;
     }
 

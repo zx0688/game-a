@@ -8,6 +8,7 @@ const swagger_1 = require("@nestjs/swagger");
 const common_1 = require("@nestjs/common");
 const fs = require("fs");
 const cors = require("cors");
+const user_controller_1 = require("./user/user.controller");
 exports.httpsOptions = {
     key: fs.readFileSync('./secrets/cert.key'),
     cert: fs.readFileSync('./secrets/cert.crt'),
@@ -30,6 +31,8 @@ async function bootstrap() {
     swagger_1.SwaggerModule.setup('api', app, document);
     const telegram = app.get(telegram_service_1.TelegramService);
     telegram.initBot();
+    const users = app.get(user_controller_1.UserController);
+    users.updateLeaderboard();
     await app.listen(8443);
     common_1.Logger.log("Server is running...");
 }

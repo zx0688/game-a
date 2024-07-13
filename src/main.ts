@@ -5,6 +5,8 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { Logger } from '@nestjs/common';
 import * as fs from 'fs'
 import * as cors from 'cors';
+import { UserService } from './user/user.service';
+import { UserController } from './user/user.controller';
 
 
 
@@ -31,11 +33,11 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-
-
-
   const telegram = app.get(TelegramService);
   telegram.initBot();
+
+  const users = app.get(UserController);
+  users.updateLeaderboard();
 
   await app.listen(8443);
   Logger.log("Server is running...");

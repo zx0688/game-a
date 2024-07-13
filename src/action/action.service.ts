@@ -33,7 +33,7 @@ export class ActionService {
         if (reward.level)
             user.level += reward.level;
         user.items = user.items.filter(r => r !== reward);
-        await user.save();
+        await this.userModel.updateOne({ uid: user.uid }, { items: user.items })
         return user.items;
     }
 
@@ -46,7 +46,7 @@ export class ActionService {
         user.quest_completed.push(value);
         var reward = new Item(GameDataInstance.quests[value]);
         user.items.push(reward);
-        await user.save();
+        await this.userModel.updateOne({ uid: user.uid }, { quest_completed: user.quest_completed, items: user.items })
         return user.items;
     }
 

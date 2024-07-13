@@ -9,7 +9,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.TelegramModule = void 0;
 const common_1 = require("@nestjs/common");
 const telegram_service_1 = require("./telegram.service");
-const telegram_controller_1 = require("./telegram.controller");
 const axios_1 = require("@nestjs/axios");
 const user_service_1 = require("../user/user.service");
 const user_schema_1 = require("../user/schema/user.schema");
@@ -20,7 +19,7 @@ exports.TelegramModule = TelegramModule;
 exports.TelegramModule = TelegramModule = __decorate([
     (0, common_1.Module)({
         providers: [telegram_service_1.TelegramService, user_service_1.UserService],
-        controllers: [telegram_controller_1.TelegramController],
+        controllers: [],
         imports: [axios_1.HttpModule, mongoose_1.MongooseModule.forFeature([{ name: user_schema_1.User.name, schema: user_schema_1.UserSchema }])]
     })
 ], TelegramModule);

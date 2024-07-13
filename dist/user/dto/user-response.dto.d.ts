@@ -1,4 +1,4 @@
-import { TokenDto } from "src/auth/dto/authorize-user-dto";
+import { TokenDto, WebAppUserDto } from "src/auth/dto/authorize-user-dto";
 import { Coins, User } from "../schema/user.schema";
 import { GameDataDto } from "./game-data.dto";
 export declare class LeaderBoardDto {
@@ -7,7 +7,7 @@ export declare class LeaderBoardDto {
     constructor(partial: Partial<LeaderBoardDto>);
 }
 export declare class UserLeaderDto {
-    user: User;
+    user: WebAppUserDto;
     coins: Coins;
     constructor(partial: Partial<UserLeaderDto>);
 }

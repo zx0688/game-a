@@ -45,7 +45,7 @@ __decorate([
     (0, swagger_1.ApiProperty)({
         description: "профиль на платформе",
     }),
-    __metadata("design:type", user_schema_1.User)
+    __metadata("design:type", authorize_user_dto_1.WebAppUserDto)
 ], UserLeaderDto.prototype, "user", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({

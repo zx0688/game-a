@@ -55,8 +55,6 @@ export class ActionController {
             leaderboard: UserService.LeaderBoardCacheInstance,
             updated: update
         });
-
-        //return await this.handleAction(token.uid, user => this.actionService.collect(user, value));
     }
 
     @Post("quest")

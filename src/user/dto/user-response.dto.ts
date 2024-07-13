@@ -1,4 +1,4 @@
-import { TokenDto } from "src/auth/dto/authorize-user-dto";
+import { TokenDto, WebAppUserDto } from "src/auth/dto/authorize-user-dto";
 import { Coins, User } from "../schema/user.schema"
 import { GameDataDto } from "./game-data.dto"
 import { ApiProperty } from "@nestjs/swagger";
@@ -23,7 +23,7 @@ export class UserLeaderDto {
     @ApiProperty({
         description: "профиль на платформе",
     })
-    user: User;
+    user: WebAppUserDto;
     @ApiProperty({
         description: "монеты пользоватля",
     })

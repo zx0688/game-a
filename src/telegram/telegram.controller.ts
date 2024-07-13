@@ -23,8 +23,6 @@ export class TelegramController {
     async webhook(@Body() data: UpdateDto) {
 
         Logger.log("webhook:" + JSON.stringify(data));
-
-
         const id = data.update_id.toString();
         const value = await this.cache.get(id);
         if (value) return;

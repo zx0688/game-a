@@ -19,6 +19,20 @@ export class TelegramService {
 
     async initBot() {
 
+        bot.start((ctx) => ctx.reply('Welcome!'));
+
+        bot.command('pay', (ctx) => {
+            ctx.reply('Welcome!');
+            ctx.replyWithInvoice({
+                title: 'Test Product',
+                description: 'This is a test product',
+                payload: 'test_payload',
+                provider_token: null,
+                currency: 'USD',
+                prices: [{ label: 'Test Product', amount: 1000 }],
+                start_parameter: 'test-payment',
+            });
+        });
         bot.launch();
         await bot.createWebhook({ domain: "https://5.159.103.206:8443/telegram/webhook" });
     }

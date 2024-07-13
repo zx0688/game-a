@@ -34,7 +34,7 @@ export class TelegramService {
         });
 
         bot.command('pay', (ctx) => {
-            ctx.reply('Welcome!');
+
             ctx.replyWithInvoice({
                 title: 'Test Product',
                 description: 'This is a test product',

@@ -7,13 +7,13 @@ import * as cors from 'cors';
 
 
 
-// export const httpsOptions = {
-//   key: fs.readFileSync('./secrets/cert.key'),
-//   cert: fs.readFileSync('./secrets/cert.crt'),
-// };
+export const httpsOptions = {
+  key: fs.readFileSync('./secrets/cert.key'),
+  cert: fs.readFileSync('./secrets/cert.crt'),
+};
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { httpsOptions });
   app.use(cors());
   app.enableCors({
     origin: '*',

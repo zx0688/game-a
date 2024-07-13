@@ -43,7 +43,7 @@ export class ActionController {
 
         this.authService.checkHash(token);
         const timestamp = Date.now();
-        const leaderboard = await this.cache.get('leaderboard');
+        //const leaderboard = await this.cache.get('leaderboard');
         const uid = token.uid;
         const user = await this.userService.getByUid(uid);
         if (!user)
@@ -52,7 +52,7 @@ export class ActionController {
         const update = await this.actionService.collect(user, value);
         return new ActionResponseDto({
             timestamp: timestamp,
-            leaderboard: leaderboard as LeaderBoardDto,
+            leaderboard: UserService.LeaderBoardCacheInstance,
             updated: update
         });
 
@@ -110,7 +110,7 @@ export class ActionController {
 
     async handleAction(uid: string, updateFunction: (user: any) => Promise<any>): Promise<any> {
         const timestamp = Date.now();
-        const leaderboard = await this.cache.get('leaderboard');
+        //const leaderboard = await this.cache.get('leaderboard');
 
         const user = await this.userService.getByUid(uid);
         if (!user)
@@ -119,7 +119,7 @@ export class ActionController {
         const update = await updateFunction(user);
         let response = {
             "timestamp": timestamp,
-            "leaderboard": leaderboard,
+            "leaderboard": UserService.LeaderBoardCacheInstance,
             "updated": update
         };
         return response;

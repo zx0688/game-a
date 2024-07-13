@@ -31,7 +31,6 @@ let ActionController = class ActionController {
     async collect(value, token) {
         this.authService.checkHash(token);
         const timestamp = Date.now();
-        const leaderboard = await this.cache.get('leaderboard');
         const uid = token.uid;
         const user = await this.userService.getByUid(uid);
         if (!user)
@@ -40,7 +39,7 @@ let ActionController = class ActionController {
         const update = await this.actionService.collect(user, value);
         return new action_response_dto_1.ActionResponseDto({
             timestamp: timestamp,
-            leaderboard: leaderboard,
+            leaderboard: user_service_1.UserService.LeaderBoardCacheInstance,
             updated: update
         });
     }
@@ -55,7 +54,6 @@ let ActionController = class ActionController {
     }
     async handleAction(uid, updateFunction) {
         const timestamp = Date.now();
-        const leaderboard = await this.cache.get('leaderboard');
         const user = await this.userService.getByUid(uid);
         if (!user)
             throw new Error(`Error: User ${uid} is not found!`);
@@ -63,7 +61,7 @@ let ActionController = class ActionController {
         const update = await updateFunction(user);
         let response = {
             "timestamp": timestamp,
-            "leaderboard": leaderboard,
+            "leaderboard": user_service_1.UserService.LeaderBoardCacheInstance,
             "updated": update
         };
         return response;

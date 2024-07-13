@@ -34,10 +34,10 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   const telegram = app.get(TelegramService);
-  telegram.initBot();
+  await telegram.initBot();
 
   const users = app.get(UserController);
-  users.updateLeaderboard();
+  await users.updateLeaderboard();
 
   await app.listen(8443);
   Logger.log("Server is running...");

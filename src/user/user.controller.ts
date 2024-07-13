@@ -42,14 +42,13 @@ export class UserController {
 
         const user = await this.userService.getByUidOrCreate(authorizationData.user);
         const timestamp_next_week = this.userService.getTimestampNextWeek();
-        const leaderboard = await this.cache.get('leaderboard');
-        Logger.log(leaderboard);
+        //const leaderboard = await this.cache.get('leaderboard');
         const resp = new ProfileResponseDto({
             "timestamp": Date.now(),
             "user": user,
             "data": GameDataInstance,
             "timestampNextWeek": timestamp_next_week,
-            "leaderboard": leaderboard as LeaderBoardDto,
+            "leaderboard": UserService.LeaderBoardCacheInstance,
             "token": token
         });
         return resp;
@@ -82,8 +81,6 @@ export class UserController {
     async updateLeaderboard(): Promise<void> {
         this.userService.createTimestampNextWeek();
         const leaderboard = await this.userService.createLeaderBoard();
-        await this.cache.set('leaderboard', leaderboard, -1);
-
         return;
     }
 

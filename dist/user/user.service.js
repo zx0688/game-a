@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var UserService_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserService = void 0;
 const common_1 = require("@nestjs/common");
@@ -18,7 +19,8 @@ const mongoose_1 = require("@nestjs/mongoose");
 const user_schema_1 = require("./schema/user.schema");
 const mongoose_2 = require("mongoose");
 const user_create_dto_1 = require("./dto/user-create.dto");
-let UserService = class UserService {
+const user_response_dto_1 = require("./dto/user-response.dto");
+let UserService = UserService_1 = class UserService {
     constructor(userModel) {
         this.userModel = userModel;
         this.timeStampNextWeek = null;
@@ -65,10 +67,11 @@ let UserService = class UserService {
         catch (error) {
             throw new common_1.HttpException(`Error sorting users ${error}`, common_1.HttpStatus.NOT_FOUND);
         }
-        return {
-            total: total,
-            week: week
-        };
+        UserService_1.LeaderBoardCacheInstance = new user_response_dto_1.LeaderBoardDto({
+            total: total.map(u => new user_response_dto_1.UserLeaderDto({ user: u.user, coins: u.coins })),
+            week: week.map(u => new user_response_dto_1.UserLeaderDto({ user: u.user, coins: u.coins }))
+        });
+        return UserService_1.LeaderBoardCacheInstance;
     }
     async findUsersByIds(uids) {
         return await this.userModel.find({ uid: { $in: uids } }).limit(100).exec();
@@ -107,7 +110,7 @@ let UserService = class UserService {
     }
 };
 exports.UserService = UserService;
-exports.UserService = UserService = __decorate([
+exports.UserService = UserService = UserService_1 = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, mongoose_1.InjectModel)(user_schema_1.User.name)),
     __metadata("design:paramtypes", [mongoose_2.Model])

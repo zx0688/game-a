@@ -15,6 +15,9 @@ const user_schema_1 = require("../schema/user.schema");
 const game_data_dto_1 = require("./game-data.dto");
 const swagger_1 = require("@nestjs/swagger");
 class LeaderBoardDto {
+    constructor(partial) {
+        Object.assign(this, partial);
+    }
 }
 exports.LeaderBoardDto = LeaderBoardDto;
 __decorate([
@@ -33,6 +36,9 @@ __decorate([
 ], LeaderBoardDto.prototype, "week", void 0);
 ;
 class UserLeaderDto {
+    constructor(partial) {
+        Object.assign(this, partial);
+    }
 }
 exports.UserLeaderDto = UserLeaderDto;
 __decorate([

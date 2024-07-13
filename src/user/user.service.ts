@@ -9,6 +9,8 @@ import { LeaderBoardDto, UserLeaderDto } from './dto/user-response.dto';
 @Injectable()
 export class UserService {
 
+    public static LeaderBoardCacheInstance: LeaderBoardDto;
+
     constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) { }
 
     private timeStampNextWeek: number = null;
@@ -55,10 +57,12 @@ export class UserService {
         catch (error) {
             throw new HttpException(`Error sorting users ${error}`, HttpStatus.NOT_FOUND);
         }
-        return new LeaderBoardDto({
+
+        UserService.LeaderBoardCacheInstance = new LeaderBoardDto({
             total: total.map(u => new UserLeaderDto({ user: u.user, coins: u.coins })),
             week: week.map(u => new UserLeaderDto({ user: u.user, coins: u.coins }))
         });
+        return UserService.LeaderBoardCacheInstance;
     }
 
     async findUsersByIds(uids: string[]): Promise<UserDocument[]> {

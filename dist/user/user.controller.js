@@ -37,13 +37,12 @@ let UserController = class UserController {
             throw new common_1.HttpException("Unauth user!", common_1.HttpStatus.UNAUTHORIZED);
         const user = await this.userService.getByUidOrCreate(authorizationData.user);
         const timestamp_next_week = this.userService.getTimestampNextWeek();
-        const leaderboard = await this.cache.get('leaderboard');
         const resp = new user_response_dto_1.ProfileResponseDto({
             "timestamp": Date.now(),
             "user": user,
             "data": game_data_dto_1.GameDataInstance,
             "timestampNextWeek": timestamp_next_week,
-            "leaderboard": leaderboard,
+            "leaderboard": user_service_1.UserService.LeaderBoardCacheInstance,
             "token": token
         });
         return resp;
@@ -59,7 +58,6 @@ let UserController = class UserController {
     async updateLeaderboard() {
         this.userService.createTimestampNextWeek();
         const leaderboard = await this.userService.createLeaderBoard();
-        await this.cache.set('leaderboard', leaderboard, -1);
         return;
     }
 };

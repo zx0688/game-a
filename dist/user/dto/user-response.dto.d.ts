@@ -4,10 +4,12 @@ import { GameDataDto } from "./game-data.dto";
 export declare class LeaderBoardDto {
     total: UserLeaderDto[];
     week: UserLeaderDto[];
+    constructor(partial: Partial<LeaderBoardDto>);
 }
 export declare class UserLeaderDto {
     user: User;
     coins: Coins;
+    constructor(partial: Partial<UserLeaderDto>);
 }
 export declare class ProfileResponseDto {
     timestamp: number;

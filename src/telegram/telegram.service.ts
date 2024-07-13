@@ -40,9 +40,9 @@ export class TelegramService {
                 description: 'This is a test product',
                 payload: 'test_payload',
                 provider_token: "",
-                currency: 'USD',
+                currency: 'XTR',
                 prices: [{ label: 'Test Product', amount: 1000 }],
-                start_parameter: 'test-payment',
+                start_parameter: 'test-payment'
             });
         });
         bot.launch();

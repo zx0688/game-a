@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { TelegramService } from './telegram/telegram.service';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { Logger } from '@nestjs/common';
 import * as fs from 'fs'
 import * as cors from 'cors';
 
@@ -31,11 +32,13 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
 
+
+
   const telegram = app.get(TelegramService);
   telegram.initBot();
 
   await app.listen(8443);
-
+  Logger.log("Server is running...");
 }
 
 bootstrap();

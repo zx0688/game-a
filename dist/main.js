@@ -5,6 +5,7 @@ const core_1 = require("@nestjs/core");
 const app_module_1 = require("./app.module");
 const telegram_service_1 = require("./telegram/telegram.service");
 const swagger_1 = require("@nestjs/swagger");
+const common_1 = require("@nestjs/common");
 const fs = require("fs");
 const cors = require("cors");
 exports.httpsOptions = {
@@ -30,6 +31,7 @@ async function bootstrap() {
     const telegram = app.get(telegram_service_1.TelegramService);
     telegram.initBot();
     await app.listen(8443);
+    common_1.Logger.log("Server is running...");
 }
 bootstrap();
 //# sourceMappingURL=main.js.map

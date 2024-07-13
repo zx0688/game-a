@@ -9,16 +9,14 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TelegramService = exports.webhookUrl = exports.botToken = void 0;
+exports.TelegramService = exports.botToken = void 0;
 const common_1 = require("@nestjs/common");
-const rxjs_1 = require("rxjs");
 const axios_1 = require("@nestjs/axios");
 const user_service_1 = require("../user/user.service");
 const game_data_dto_1 = require("../user/dto/game-data.dto");
 const user_schema_1 = require("../user/schema/user.schema");
 const telegraf_1 = require("telegraf");
 exports.botToken = "7373260082:AAEHUW41sZeLIy8z2wy29j0nxXl-F0Hchsc";
-exports.webhookUrl = `https://5.159.103.206:8443/telegram/webhook`;
 const bot = new telegraf_1.Telegraf(exports.botToken);
 let TelegramService = class TelegramService {
     constructor(userService, httpService) {
@@ -26,6 +24,13 @@ let TelegramService = class TelegramService {
         this.httpService = httpService;
     }
     async initBot() {
+        bot.launch({
+            webhook: {
+                domain: "https://5.159.103.206",
+                port: 8443,
+                path: "/telegram/webhook",
+            },
+        });
     }
     async webhook(update) {
         if (update.pre_checkout_query) {
@@ -45,44 +50,6 @@ let TelegramService = class TelegramService {
             await user.save();
         }
         return update;
-    }
-    checkAndSetWebhook() {
-        const url = `https://api.telegram.org/bot${exports.botToken}/getWebhookInfo`;
-        console.log(`info webhook... ${url}`);
-        this.httpService.get(url).pipe((0, rxjs_1.map)(response => {
-            if (response.data.ok) {
-                return response.data.result.url;
-            }
-            else {
-                throw new Error('Webhook setup failed!');
-            }
-        })).subscribe({
-            next: (data) => {
-                console.log('Current webhook is ', data == "" ? "null" : data);
-                if (data != exports.webhookUrl)
-                    this.setWebhook();
-            },
-            error: (error) => console.error('Error info webhook:', error.response.data)
-        });
-    }
-    setWebhook() {
-        const url = `https://api.telegram.org/bot${exports.botToken}/setWebhook`;
-        const body = {
-            "url": exports.webhookUrl,
-            "allowed_updates": ['successful_payment', 'pre_checkout_query']
-        };
-        console.log(`set webhook... ${url}`);
-        this.httpService.post(url, body).pipe((0, rxjs_1.map)(response => {
-            if (response.data.ok) {
-                return response.data;
-            }
-            else {
-                throw new Error('Webhook setup failed');
-            }
-        })).subscribe({
-            next: (data) => console.log('Webhook set successfully:', data),
-            error: (error) => console.error('Error setting webhook:', error.response.data)
-        });
     }
 };
 exports.TelegramService = TelegramService;

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Inject, Post } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Logger, Post } from '@nestjs/common';
 import { UpdateDto } from './dto/telegram-api-dto';
 import { TelegramService } from './telegram.service';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
@@ -21,6 +21,10 @@ export class TelegramController {
         type: UpdateDto
     })
     async webhook(@Body() data: UpdateDto) {
+
+        Logger.log("webhook:" + JSON.stringify(data));
+
+
         const id = data.update_id.toString();
         const value = await this.cache.get(id);
         if (value) return;

@@ -104,20 +104,20 @@ __decorate([
 ], User.prototype, "level", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({
+        description: "энергия",
+        default: 100
+    }),
+    (0, mongoose_1.Prop)({ type: Number }),
+    __metadata("design:type", Number)
+], User.prototype, "energy", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
         description: "количество звезд",
         default: 1
     }),
     (0, mongoose_1.Prop)({ type: Number }),
     __metadata("design:type", Number)
 ], User.prototype, "stars", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({
-        description: "время истечения энергии",
-        default: 32423423
-    }),
-    (0, mongoose_1.Prop)({ type: Number }),
-    __metadata("design:type", Number)
-], User.prototype, "timestamp_recovery", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({
         description: "время истечения энергии"

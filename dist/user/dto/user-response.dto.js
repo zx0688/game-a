@@ -26,7 +26,21 @@ __decorate([
         default: []
     }),
     __metadata("design:type", Array)
+], LeaderBoardDto.prototype, "top_total", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        description: "все пользователи с общим количеством монет",
+        default: []
+    }),
+    __metadata("design:type", Array)
 ], LeaderBoardDto.prototype, "total", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        description: "топ пользователей за неделю",
+        default: []
+    }),
+    __metadata("design:type", Array)
+], LeaderBoardDto.prototype, "top_week", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({
         description: "топ пользователей за неделю",
@@ -90,7 +104,7 @@ __decorate([
     (0, swagger_1.ApiProperty)({
         description: "таблица лидеров"
     }),
-    __metadata("design:type", LeaderBoardDto)
+    __metadata("design:type", Object)
 ], ProfileResponseDto.prototype, "leaderboard", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({

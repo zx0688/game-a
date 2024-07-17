@@ -7,7 +7,7 @@ class UserCreateDto {
         this.level = 1;
         this.stars = 0;
         this.uid = data.id.toString();
-        this.timestamp_recovery = Date.now();
+        this.energy = 100;
         this.user = data;
         this.items = [];
         this.loot_boxes = {};

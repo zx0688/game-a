@@ -12,7 +12,6 @@ export declare class GameDataDto {
         "1500": number;
         "2500": number;
     };
-    readonly durationRecovery: Number;
     readonly referral: {
         "1": number;
         "2": number;
@@ -29,5 +28,6 @@ export declare class GameDataDto {
             coins: number;
         };
     };
+    readonly levelCost: number;
 }
 export declare const GameDataInstance: GameDataDto;

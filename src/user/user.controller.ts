@@ -42,13 +42,20 @@ export class UserController {
 
         const user = await this.userService.getByUidOrCreate(authorizationData.user);
         const timestamp_next_week = this.userService.getTimestampNextWeek();
-        //const leaderboard = await this.cache.get('leaderboard');
+        const leaderboard = UserService.LeaderBoard;
+        const l = {
+            total: leaderboard.top_total,
+            week: leaderboard.top_week,
+            total_user: leaderboard.total.indexOf(token.uid) + 1,
+            week_user: leaderboard.week.indexOf(token.uid) + 1
+        };
+
         const resp = new ProfileResponseDto({
             "timestamp": Date.now(),
             "user": user,
             "data": GameDataInstance,
             "timestampNextWeek": timestamp_next_week,
-            "leaderboard": UserService.LeaderBoardCacheInstance,
+            "leaderboard": l,
             "token": token
         });
         return resp;
@@ -76,12 +83,37 @@ export class UserController {
         return user.items;
     }
 
+    @Post("leaderboard")
+    @ApiOperation({ summary: 'получение списка лидеров' })
+    @ApiResponse({
+        status: 200,
+        type: [Item]
+    })
+    @ApiBody({
+        description: 'Токен для запросов на бекенд',
+        required: true,
+        type: TokenDto
+    })
+    async getLeaderboard(@Body() token: TokenDto) {
+        this.authService.checkHash(token);
+        const leaderboard: LeaderBoardDto = UserService.LeaderBoard;//await this.cache.get('leaderboard');
+        return {
+            total: leaderboard.top_total,
+            week: leaderboard.top_week,
+            total_user: leaderboard.total.indexOf(token.uid) + 1,
+            week_user: leaderboard.week.indexOf(token.uid) + 1
+        };
+    }
+
     @Cron(CronExpression.EVERY_MINUTE)
     @ApiOperation({ summary: 'Обновление таблицы лидеров по расписанию, раз в 2 часа' })
     async updateLeaderboard(): Promise<void> {
         Logger.log("Обновление таблицы лидеров");
         this.userService.createTimestampNextWeek();
         const leaderboard = await this.userService.createLeaderBoard();
+        UserService.LeaderBoard = leaderboard;
+        //
+        Logger.log("Обновление таблицы лидеров завершено");
         return;
     }
 

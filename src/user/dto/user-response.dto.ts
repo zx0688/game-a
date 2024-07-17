@@ -8,12 +8,23 @@ export class LeaderBoardDto {
         description: "топ пользователи с общим количеством монет",
         default: []
     })
-    total: UserLeaderDto[];
+    top_total: UserLeaderDto[];
+    @ApiProperty({
+        description: "все пользователи с общим количеством монет",
+        default: []
+    })
+    total: string[];
+
     @ApiProperty({
         description: "топ пользователей за неделю",
         default: []
     })
-    week: UserLeaderDto[];
+    top_week: UserLeaderDto[];
+    @ApiProperty({
+        description: "топ пользователей за неделю",
+        default: []
+    })
+    week: string[];
     constructor(partial: Partial<LeaderBoardDto>) {
         Object.assign(this, partial);
     }
@@ -57,7 +68,7 @@ export class ProfileResponseDto {
     @ApiProperty({
         description: "таблица лидеров"
     })
-    leaderboard: LeaderBoardDto;
+    leaderboard: any;
 
     @ApiProperty({
         description: "игровой токен"

@@ -18,15 +18,41 @@ const user_service_1 = require("../user/user.service");
 const action_service_1 = require("./action.service");
 const auth_service_1 = require("../auth/auth.service");
 const authorize_user_dto_1 = require("../auth/dto/authorize-user-dto");
-const cache_manager_1 = require("@nestjs/cache-manager");
 const swagger_1 = require("@nestjs/swagger");
 const action_response_dto_1 = require("./dto/action-response.dto");
 let ActionController = class ActionController {
-    constructor(cache, userService, actionService, authService) {
-        this.cache = cache;
+    constructor(userService, actionService, authService) {
         this.userService = userService;
         this.actionService = actionService;
         this.authService = authService;
+    }
+    async energy(value, token) {
+        this.authService.checkHash(token);
+        const timestamp = Date.now();
+        const uid = token.uid;
+        const user = await this.userService.getByUid(uid);
+        if (!user)
+            throw new Error(`Error: User ${uid} is not found!`);
+        user.timestamp = timestamp;
+        const update = await this.actionService.energy(user, value);
+        return new action_response_dto_1.ActionResponseDto({
+            timestamp: timestamp,
+            updated: update
+        });
+    }
+    async levelup(token) {
+        this.authService.checkHash(token);
+        const timestamp = Date.now();
+        const uid = token.uid;
+        const user = await this.userService.getByUid(uid);
+        if (!user)
+            throw new Error(`Error: User ${uid} is not found!`);
+        user.timestamp = timestamp;
+        const update = await this.actionService.levelup(user);
+        return new action_response_dto_1.ActionResponseDto({
+            timestamp: timestamp,
+            updated: update
+        });
     }
     async collect(value, token) {
         this.authService.checkHash(token);
@@ -39,7 +65,6 @@ let ActionController = class ActionController {
         const update = await this.actionService.collect(user, value);
         return new action_response_dto_1.ActionResponseDto({
             timestamp: timestamp,
-            leaderboard: user_service_1.UserService.LeaderBoardCacheInstance,
             updated: update
         });
     }
@@ -61,13 +86,52 @@ let ActionController = class ActionController {
         const update = await updateFunction(user);
         let response = {
             "timestamp": timestamp,
-            "leaderboard": user_service_1.UserService.LeaderBoardCacheInstance,
             "updated": update
         };
         return response;
     }
 };
 exports.ActionController = ActionController;
+__decorate([
+    (0, common_1.Post)("energy"),
+    (0, swagger_1.ApiOperation)({ summary: 'Энергия' }),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        type: action_response_dto_1.ActionResponseDto
+    }),
+    (0, swagger_1.ApiParam)({
+        name: 'value',
+        required: true,
+        description: 'Значение монет для добавления'
+    }),
+    (0, swagger_1.ApiBody)({
+        description: 'Токен для запросов на бекенд',
+        required: true,
+        type: authorize_user_dto_1.TokenDto
+    }),
+    __param(0, (0, common_1.Query)("value")),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, authorize_user_dto_1.TokenDto]),
+    __metadata("design:returntype", Promise)
+], ActionController.prototype, "energy", null);
+__decorate([
+    (0, common_1.Post)("levelup"),
+    (0, swagger_1.ApiOperation)({ summary: 'Покупка уровня за монеты' }),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        type: action_response_dto_1.ActionResponseDto
+    }),
+    (0, swagger_1.ApiBody)({
+        description: 'Токен для запросов на бекенд',
+        required: true,
+        type: authorize_user_dto_1.TokenDto
+    }),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [authorize_user_dto_1.TokenDto]),
+    __metadata("design:returntype", Promise)
+], ActionController.prototype, "levelup", null);
 __decorate([
     (0, common_1.Post)("collect"),
     (0, swagger_1.ApiOperation)({ summary: 'Сбор монет. Запрос отправляется каждый раз при сборе монет, требует игровой токен который выдается profile/get' }),
@@ -139,8 +203,7 @@ __decorate([
 ], ActionController.prototype, "accept", null);
 exports.ActionController = ActionController = __decorate([
     (0, common_1.Controller)('action'),
-    __param(0, (0, common_1.Inject)(cache_manager_1.CACHE_MANAGER)),
-    __metadata("design:paramtypes", [Object, user_service_1.UserService,
+    __metadata("design:paramtypes", [user_service_1.UserService,
         action_service_1.ActionService,
         auth_service_1.AuthService])
 ], ActionController);

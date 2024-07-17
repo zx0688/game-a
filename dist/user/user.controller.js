@@ -37,12 +37,19 @@ let UserController = class UserController {
             throw new common_1.HttpException("Unauth user!", common_1.HttpStatus.UNAUTHORIZED);
         const user = await this.userService.getByUidOrCreate(authorizationData.user);
         const timestamp_next_week = this.userService.getTimestampNextWeek();
+        const leaderboard = user_service_1.UserService.LeaderBoard;
+        const l = {
+            total: leaderboard.top_total,
+            week: leaderboard.top_week,
+            total_user: leaderboard.total.indexOf(token.uid) + 1,
+            week_user: leaderboard.week.indexOf(token.uid) + 1
+        };
         const resp = new user_response_dto_1.ProfileResponseDto({
             "timestamp": Date.now(),
             "user": user,
             "data": game_data_dto_1.GameDataInstance,
             "timestampNextWeek": timestamp_next_week,
-            "leaderboard": user_service_1.UserService.LeaderBoardCacheInstance,
+            "leaderboard": l,
             "token": token
         });
         return resp;
@@ -55,10 +62,22 @@ let UserController = class UserController {
             throw new common_1.HttpException("user not found!", common_1.HttpStatus.EXPECTATION_FAILED);
         return user.items;
     }
+    async getLeaderboard(token) {
+        this.authService.checkHash(token);
+        const leaderboard = user_service_1.UserService.LeaderBoard;
+        return {
+            total: leaderboard.top_total,
+            week: leaderboard.top_week,
+            total_user: leaderboard.total.indexOf(token.uid) + 1,
+            week_user: leaderboard.week.indexOf(token.uid) + 1
+        };
+    }
     async updateLeaderboard() {
         common_1.Logger.log("Обновление таблицы лидеров");
         this.userService.createTimestampNextWeek();
         const leaderboard = await this.userService.createLeaderBoard();
+        user_service_1.UserService.LeaderBoard = leaderboard;
+        common_1.Logger.log("Обновление таблицы лидеров завершено");
         return;
     }
 };
@@ -99,6 +118,23 @@ __decorate([
     __metadata("design:paramtypes", [authorize_user_dto_1.TokenDto]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "getItems", null);
+__decorate([
+    (0, common_1.Post)("leaderboard"),
+    (0, swagger_1.ApiOperation)({ summary: 'получение списка лидеров' }),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        type: [user_schema_1.Item]
+    }),
+    (0, swagger_1.ApiBody)({
+        description: 'Токен для запросов на бекенд',
+        required: true,
+        type: authorize_user_dto_1.TokenDto
+    }),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [authorize_user_dto_1.TokenDto]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "getLeaderboard", null);
 __decorate([
     (0, schedule_1.Cron)(schedule_1.CronExpression.EVERY_MINUTE),
     (0, swagger_1.ApiOperation)({ summary: 'Обновление таблицы лидеров по расписанию, раз в 2 часа' }),

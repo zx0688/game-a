@@ -8,14 +8,14 @@ export class UserCreateDto {
     coins: Coins;
     level: number = 1;
     stars: number = 0;
-    timestamp_recovery: number;
+    energy: number;
     loot_boxes: any;
     quest_completed: string[];
     items: Item[];
 
     constructor(data: WebAppUserDto) {
         this.uid = data.id.toString();
-        this.timestamp_recovery = Date.now();
+        this.energy = 100;
         this.user = data;
         this.items = [];
         this.loot_boxes = {};

@@ -17,11 +17,35 @@ export class ActionService {
     constructor(private userService: UserService,
         @InjectModel(User.name) private userModel: Model<UserDocument>) { }
 
+
+    async energy(user: UserDocument, value: string): Promise<number> {
+        var intValue = parseInt(value);
+        if (intValue > 100)
+            intValue = 100;
+        if (intValue < 0)
+            intValue = 0;
+        user.energy = intValue;
+        await this.userModel.updateOne({ uid: user.uid }, { energy: user.energy })
+        return user.energy;
+    }
+
     async collect(user: UserDocument, value: string): Promise<Coins> {
         const intValue = parseInt(value);
         this.addCoins(user, intValue);
         await this.userModel.updateOne({ uid: user.uid }, { coins: user.coins })
         return user.coins;
+    }
+
+    async levelup(user: UserDocument): Promise<UserDocument> {
+        var levelCost: number = GameDataInstance.levelCost;
+        var cost = (levelCost * user.level);
+        if (user.coins.coins_total < cost)
+            throw new HttpException(`Error: player has no enogh money`, HttpStatus.EXPECTATION_FAILED);
+        user.level++;
+        user.energy = 100;
+        this.addCoins(user, -cost);
+        await this.userModel.updateOne({ uid: user.uid }, { coins: user.coins, level: user.level, energy: user.energy })
+        return user;
     }
 
     async accept(user: UserDocument, value: string): Promise<Item[]> {
@@ -56,7 +80,11 @@ export class ActionService {
 
         if (user.timestamp >= this.userService.getTimestampNextWeek())
             user.coins.coins_week = 0;
+
         user.coins.coins_week += value;
+        if (user.coins.coins_week < 0) {
+            user.coins.coins_week = 0;
+        }
     }
 
 

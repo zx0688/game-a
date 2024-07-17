@@ -10,7 +10,9 @@ export declare class ActionService {
     private userService;
     private userModel;
     constructor(userService: UserService, userModel: Model<UserDocument>);
+    energy(user: UserDocument, value: string): Promise<number>;
     collect(user: UserDocument, value: string): Promise<Coins>;
+    levelup(user: UserDocument): Promise<UserDocument>;
     accept(user: UserDocument, value: string): Promise<Item[]>;
     quest(user: UserDocument, value: string): Promise<Item[]>;
     private addCoins;

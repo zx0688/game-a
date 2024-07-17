@@ -28,11 +28,7 @@ exports.AppModule = AppModule = __decorate([
             user_module_1.UserModule,
             mongoose_1.MongooseModule.forRoot(exports.uri),
             action_module_1.ActionModule,
-            cache_manager_1.CacheModule.register({
-                ttl: 900,
-                max: 1000,
-                isGlobal: true
-            })
+            cache_manager_1.CacheModule.register()
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService]

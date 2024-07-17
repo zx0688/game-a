@@ -13,5 +13,11 @@ export declare class UserController {
     constructor(cache: Cache, userService: UserService, authService: AuthService, actionService: ActionService);
     getProfile(authorizationData: WebAppInitDataDto): Promise<ProfileResponseDto>;
     getItems(token: TokenDto): Promise<Item[]>;
+    getLeaderboard(token: TokenDto): Promise<{
+        total: import("./dto/user-response.dto").UserLeaderDto[];
+        week: import("./dto/user-response.dto").UserLeaderDto[];
+        total_user: number;
+        week_user: number;
+    }>;
     updateLeaderboard(): Promise<void>;
 }

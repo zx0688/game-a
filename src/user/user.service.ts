@@ -9,7 +9,7 @@ import { LeaderBoardDto, UserLeaderDto } from './dto/user-response.dto';
 @Injectable()
 export class UserService {
 
-    public static LeaderBoardCacheInstance: LeaderBoardDto;
+    public static LeaderBoard: LeaderBoardDto = null;
 
     constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) { }
 
@@ -37,32 +37,48 @@ export class UserService {
     }
 
     async createLeaderBoard(): Promise<LeaderBoardDto> {
-        let total, week;
+        let total_ids, week_ids, top_total, top_week;
         try {
-            total = await this.userModel
+            const total = await this.userModel
                 .find({})
                 .sort({ "coins.coins_total": -1 })
-                .limit(10)
+                .select("user.id")
+                .lean()
+                .exec();
+
+            total_ids = total.map(user => user.user.id.toString());
+            top_total = await this.userModel
+                .find({ "user.id": { $in: total_ids } })
                 .select("user coins")
                 .lean()
                 .exec();
-            week = await this.userModel
+
+            const week = await this.userModel
                 .find({})
                 .sort({ "coins.coins_week": -1 })
-                .limit(10)
+                .select("user.id")
+                .lean()
+                .exec();
+
+            week_ids = week.map(user => user.user.id.toString());
+            top_week = await this.userModel
+                .find({ "user.id": { $in: week_ids } })
                 .select("user coins")
                 .lean()
                 .exec();
+
         }
         catch (error) {
             throw new HttpException(`Error sorting users ${error}`, HttpStatus.NOT_FOUND);
         }
-
-        UserService.LeaderBoardCacheInstance = new LeaderBoardDto({
-            total: total.map(u => new UserLeaderDto({ user: u.user, coins: u.coins })),
-            week: week.map(u => new UserLeaderDto({ user: u.user, coins: u.coins }))
+        const board = new LeaderBoardDto({
+            top_total: top_total.map(u => new UserLeaderDto({ user: u.user, coins: u.coins })),
+            total: total_ids,
+            week: week_ids,
+            top_week: top_week.map(u => new UserLeaderDto({ user: u.user, coins: u.coins }))
         });
-        return UserService.LeaderBoardCacheInstance;
+
+        return board;
     }
 
     async findUsersByIds(uids: string[]): Promise<UserDocument[]> {

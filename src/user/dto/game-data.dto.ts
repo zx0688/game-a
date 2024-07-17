@@ -8,10 +8,6 @@ export class GameDataDto {
     readonly levelStars = levelStars;
 
     @ApiProperty({
-        description: "время восстановления"
-    })
-    readonly durationRecovery: Number = 34;
-    @ApiProperty({
         description: "рефералы"
     })
     readonly referral = referral;
@@ -24,7 +20,10 @@ export class GameDataDto {
     })
     readonly quests = questReward;
 
+    readonly levelCost: number = 30;
+
 }
+
 
 const levelStars = {
     "50": 9,

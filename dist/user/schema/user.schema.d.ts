@@ -17,8 +17,8 @@ export declare class User {
     user: WebAppUserDto;
     coins: Coins;
     level: number;
+    energy: number;
     stars: number;
-    timestamp_recovery: number;
     loot_boxes: any;
     quest_completed: string[];
     timestamp: number;

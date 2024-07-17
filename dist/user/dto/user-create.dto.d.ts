@@ -6,7 +6,7 @@ export declare class UserCreateDto {
     coins: Coins;
     level: number;
     stars: number;
-    timestamp_recovery: number;
+    energy: number;
     loot_boxes: any;
     quest_completed: string[];
     items: Item[];

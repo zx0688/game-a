@@ -21,11 +21,7 @@ export const uri = "mongodb+srv://root:jFIIcBYnEGCURs7k@cluster0.y6mrt.mongodb.n
     UserModule,
     MongooseModule.forRoot(uri),
     ActionModule,
-    CacheModule.register({
-      ttl: 900,
-      max: 1000,
-      isGlobal: true
-    })],
+    CacheModule.register()],
   controllers: [AppController],
   providers: [AppService]
 })

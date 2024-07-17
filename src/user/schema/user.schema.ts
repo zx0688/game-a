@@ -77,18 +77,18 @@ export class User {
     level: number;
 
     @ApiProperty({
+        description: "энергия",
+        default: 100
+    })
+    @Prop({ type: Number })
+    energy: number;
+
+    @ApiProperty({
         description: "количество звезд",
         default: 1
     })
     @Prop({ type: Number })
     stars: number;
-
-    @ApiProperty({
-        description: "время истечения энергии",
-        default: 32423423
-    })
-    @Prop({ type: Number })
-    timestamp_recovery: number;
 
     @ApiProperty({
         description: "время истечения энергии"

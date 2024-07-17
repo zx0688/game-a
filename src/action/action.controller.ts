@@ -9,17 +9,74 @@ import { UserDocument } from 'src/user/schema/user.schema';
 import { time } from 'console';
 import { ApiBody, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
 import { ActionResponseDto } from './dto/action-response.dto';
-import { LeaderBoardDto } from 'src/user/dto/user-response.dto';
 
 @Controller('action')
 export class ActionController {
 
     constructor(
-        @Inject(CACHE_MANAGER) private cache: Cache,
         private userService: UserService,
         private actionService: ActionService,
         private authService: AuthService) { }
 
+    @Post("energy")
+    @ApiOperation({ summary: 'Энергия' })
+    @ApiResponse({
+        status: 200,
+        type: ActionResponseDto
+    })
+    @ApiParam({
+        name: 'value',
+        required: true,
+        description: 'Значение монет для добавления'
+    })
+    @ApiBody({
+        description: 'Токен для запросов на бекенд',
+        required: true,
+        type: TokenDto
+    })
+    async energy(
+        @Query("value") value: string,
+        @Body() token: TokenDto) {
+        this.authService.checkHash(token);
+        const timestamp = Date.now();
+        const uid = token.uid;
+        const user = await this.userService.getByUid(uid);
+        if (!user)
+            throw new Error(`Error: User ${uid} is not found!`);
+        user.timestamp = timestamp;
+        const update = await this.actionService.energy(user, value);
+        return new ActionResponseDto({
+            timestamp: timestamp,
+            updated: update
+        });
+    }
+
+    @Post("levelup")
+    @ApiOperation({ summary: 'Покупка уровня за монеты' })
+    @ApiResponse({
+        status: 200,
+        type: ActionResponseDto
+    })
+    @ApiBody({
+        description: 'Токен для запросов на бекенд',
+        required: true,
+        type: TokenDto
+    })
+    async levelup(@Body() token: TokenDto) {
+
+        this.authService.checkHash(token);
+        const timestamp = Date.now();
+        const uid = token.uid;
+        const user = await this.userService.getByUid(uid);
+        if (!user)
+            throw new Error(`Error: User ${uid} is not found!`);
+        user.timestamp = timestamp;
+        const update = await this.actionService.levelup(user);
+        return new ActionResponseDto({
+            timestamp: timestamp,
+            updated: update
+        });
+    }
 
     @Post("collect")
     @ApiOperation({ summary: 'Сбор монет. Запрос отправляется каждый раз при сборе монет, требует игровой токен который выдается profile/get' })
@@ -43,7 +100,6 @@ export class ActionController {
 
         this.authService.checkHash(token);
         const timestamp = Date.now();
-        //const leaderboard = await this.cache.get('leaderboard');
         const uid = token.uid;
         const user = await this.userService.getByUid(uid);
         if (!user)
@@ -52,7 +108,6 @@ export class ActionController {
         const update = await this.actionService.collect(user, value);
         return new ActionResponseDto({
             timestamp: timestamp,
-            leaderboard: UserService.LeaderBoardCacheInstance,
             updated: update
         });
     }
@@ -108,8 +163,6 @@ export class ActionController {
 
     async handleAction(uid: string, updateFunction: (user: any) => Promise<any>): Promise<any> {
         const timestamp = Date.now();
-        //const leaderboard = await this.cache.get('leaderboard');
-
         const user = await this.userService.getByUid(uid);
         if (!user)
             throw new Error(`Error: User ${uid} is not found!`);
@@ -117,7 +170,6 @@ export class ActionController {
         const update = await updateFunction(user);
         let response = {
             "timestamp": timestamp,
-            "leaderboard": UserService.LeaderBoardCacheInstance,
             "updated": update
         };
         return response;

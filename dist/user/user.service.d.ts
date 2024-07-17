@@ -4,7 +4,7 @@ import { WebAppUserDto } from '../auth/dto/authorize-user-dto';
 import { LeaderBoardDto } from './dto/user-response.dto';
 export declare class UserService {
     private userModel;
-    static LeaderBoardCacheInstance: LeaderBoardDto;
+    static LeaderBoard: LeaderBoardDto;
     constructor(userModel: Model<UserDocument>);
     private timeStampNextWeek;
     getByUid(uid: string): Promise<UserDocument | null>;

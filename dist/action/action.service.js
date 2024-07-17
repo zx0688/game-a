@@ -30,11 +30,32 @@ let ActionService = class ActionService {
         this.userService = userService;
         this.userModel = userModel;
     }
+    async energy(user, value) {
+        var intValue = parseInt(value);
+        if (intValue > 100)
+            intValue = 100;
+        if (intValue < 0)
+            intValue = 0;
+        user.energy = intValue;
+        await this.userModel.updateOne({ uid: user.uid }, { energy: user.energy });
+        return user.energy;
+    }
     async collect(user, value) {
         const intValue = parseInt(value);
         this.addCoins(user, intValue);
         await this.userModel.updateOne({ uid: user.uid }, { coins: user.coins });
         return user.coins;
+    }
+    async levelup(user) {
+        var levelCost = game_data_dto_1.GameDataInstance.levelCost;
+        var cost = (levelCost * user.level);
+        if (user.coins.coins_total < cost)
+            throw new common_1.HttpException(`Error: player has no enogh money`, common_1.HttpStatus.EXPECTATION_FAILED);
+        user.level++;
+        user.energy = 100;
+        this.addCoins(user, -cost);
+        await this.userModel.updateOne({ uid: user.uid }, { coins: user.coins, level: user.level, energy: user.energy });
+        return user;
     }
     async accept(user, value) {
         var reward = user.items.find(r => r.id === value);
@@ -64,6 +85,9 @@ let ActionService = class ActionService {
         if (user.timestamp >= this.userService.getTimestampNextWeek())
             user.coins.coins_week = 0;
         user.coins.coins_week += value;
+        if (user.coins.coins_week < 0) {
+            user.coins.coins_week = 0;
+        }
     }
 };
 exports.ActionService = ActionService;

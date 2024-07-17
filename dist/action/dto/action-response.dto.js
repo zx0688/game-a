@@ -11,7 +11,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ActionResponseDto = void 0;
 const swagger_1 = require("@nestjs/swagger");
-const user_response_dto_1 = require("../../user/dto/user-response.dto");
 class ActionResponseDto {
     constructor(partial) {
         Object.assign(this, partial);
@@ -25,12 +24,6 @@ __decorate([
     }),
     __metadata("design:type", Number)
 ], ActionResponseDto.prototype, "timestamp", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({
-        description: "таблица лидеров",
-    }),
-    __metadata("design:type", user_response_dto_1.LeaderBoardDto)
-], ActionResponseDto.prototype, "leaderboard", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({
         description: "произведенные изменения профиля",

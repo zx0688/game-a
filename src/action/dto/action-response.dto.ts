@@ -8,10 +8,6 @@ export class ActionResponseDto {
     })
     timestamp: number;
     @ApiProperty({
-        description: "таблица лидеров",
-    })
-    leaderboard: LeaderBoardDto;
-    @ApiProperty({
         description: "произведенные изменения профиля",
     })
     updated: any;

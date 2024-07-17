@@ -11,7 +11,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var UserService_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserService = void 0;
 const common_1 = require("@nestjs/common");
@@ -20,7 +19,7 @@ const user_schema_1 = require("./schema/user.schema");
 const mongoose_2 = require("mongoose");
 const user_create_dto_1 = require("./dto/user-create.dto");
 const user_response_dto_1 = require("./dto/user-response.dto");
-let UserService = UserService_1 = class UserService {
+let UserService = class UserService {
     constructor(userModel) {
         this.userModel = userModel;
         this.timeStampNextWeek = null;
@@ -47,19 +46,29 @@ let UserService = UserService_1 = class UserService {
         }
     }
     async createLeaderBoard() {
-        let total, week;
+        let total_ids, week_ids, top_total, top_week;
         try {
-            total = await this.userModel
+            const total = await this.userModel
                 .find({})
                 .sort({ "coins.coins_total": -1 })
-                .limit(10)
+                .select("user.id")
+                .lean()
+                .exec();
+            total_ids = total.map(user => user.user.id.toString());
+            top_total = await this.userModel
+                .find({ "user.id": { $in: total_ids } })
                 .select("user coins")
                 .lean()
                 .exec();
-            week = await this.userModel
+            const week = await this.userModel
                 .find({})
                 .sort({ "coins.coins_week": -1 })
-                .limit(10)
+                .select("user.id")
+                .lean()
+                .exec();
+            week_ids = week.map(user => user.user.id.toString());
+            top_week = await this.userModel
+                .find({ "user.id": { $in: week_ids } })
                 .select("user coins")
                 .lean()
                 .exec();
@@ -67,11 +76,13 @@ let UserService = UserService_1 = class UserService {
         catch (error) {
             throw new common_1.HttpException(`Error sorting users ${error}`, common_1.HttpStatus.NOT_FOUND);
         }
-        UserService_1.LeaderBoardCacheInstance = new user_response_dto_1.LeaderBoardDto({
-            total: total.map(u => new user_response_dto_1.UserLeaderDto({ user: u.user, coins: u.coins })),
-            week: week.map(u => new user_response_dto_1.UserLeaderDto({ user: u.user, coins: u.coins }))
+        const board = new user_response_dto_1.LeaderBoardDto({
+            top_total: top_total.map(u => new user_response_dto_1.UserLeaderDto({ user: u.user, coins: u.coins })),
+            total: total_ids,
+            week: week_ids,
+            top_week: top_week.map(u => new user_response_dto_1.UserLeaderDto({ user: u.user, coins: u.coins }))
         });
-        return UserService_1.LeaderBoardCacheInstance;
+        return board;
     }
     async findUsersByIds(uids) {
         return await this.userModel.find({ uid: { $in: uids } }).limit(100).exec();
@@ -108,7 +119,8 @@ let UserService = UserService_1 = class UserService {
     }
 };
 exports.UserService = UserService;
-exports.UserService = UserService = UserService_1 = __decorate([
+UserService.LeaderBoard = null;
+exports.UserService = UserService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, mongoose_1.InjectModel)(user_schema_1.User.name)),
     __metadata("design:paramtypes", [mongoose_2.Model])

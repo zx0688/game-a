@@ -21,7 +21,7 @@ const user_schema_1 = require("../user/schema/user.schema");
 const telegraf_1 = require("telegraf");
 const mongoose_1 = require("mongoose");
 const mongoose_2 = require("@nestjs/mongoose");
-exports.botToken = "7373260082:AAEHUW41sZeLIy8z2wy29j0nxXl-F0Hchsc";
+exports.botToken = "7471815045:AAHTC3uTEjh9I1V5Wag0FtfsEmoXi5zfegA";
 const bot = new telegraf_1.Telegraf(exports.botToken);
 let TelegramService = class TelegramService {
     constructor(userService, httpService, userModel) {

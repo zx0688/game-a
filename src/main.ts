@@ -15,13 +15,13 @@ export const httpsOptions = {
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { httpsOptions });
-  // app.use(cors());
-  // app.enableCors({
-  //   origin: '*',
-  //   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  //   allowedHeaders: ['Content-Type', 'Accept', 'Authorization', 'Access-Control-Allow-Origin'],
-  //   credentials: true
-  // });
+  app.use(cors());
+  app.enableCors({
+    origin: '*',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    allowedHeaders: ['Content-Type', 'Accept', 'Authorization', 'Access-Control-Allow-Origin'],
+    credentials: true
+  });
 
   const config = new DocumentBuilder()
     .setTitle('BullGame')

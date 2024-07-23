@@ -11,7 +11,7 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 
 
-export const botToken = "7471815045:AAHTC3uTEjh9I1V5Wag0FtfsEmoXi5zfegA";
+export const botToken = "7373260082:AAEHUW41sZeLIy8z2wy29j0nxXl-F0Hchsc";
 const bot = new Telegraf(botToken);
 
 @Injectable()

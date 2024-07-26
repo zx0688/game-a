@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.verifyTelegramWebAppData = void 0;
+exports.verifyTelegramWebAppData = verifyTelegramWebAppData;
 const crypto = require("crypto");
 const telegram_service_1 = require("../../telegram/telegram.service");
 function jsonToURLParameters(json) {
@@ -13,21 +13,29 @@ function jsonToURLParameters(json) {
     });
     return params.toString();
 }
-const verifyTelegramWebAppData = (winitData) => {
-    const initData = new URLSearchParams(jsonToURLParameters(winitData));
-    const hash = initData.get("hash");
-    const dataToCheck = [];
-    initData.sort();
-    initData.forEach((val, key) => key !== "hash" && dataToCheck.push(`${key}=${val}`));
-    const secret = crypto
-        .createHmac("sha256", "WebAppData")
-        .update(telegram_service_1.botToken)
-        .digest();
-    const _hash = crypto
-        .createHmac("sha256", secret)
-        .update(dataToCheck.join("\n"))
-        .digest("hex");
-    return hash === _hash;
-};
-exports.verifyTelegramWebAppData = verifyTelegramWebAppData;
+async function verifyTelegramWebAppData(winitData) {
+    const hash = winitData.hash;
+    const data = transformInitData(winitData);
+    const hex = await generateHex(data, telegram_service_1.botToken);
+    return hash === hex;
+}
+function transformInitData(initData) {
+    return Object.fromEntries(new URLSearchParams(initData));
+}
+async function generateHex(data, botToken) {
+    const encoder = new TextEncoder();
+    const checkString = await Object.keys(data)
+        .filter((key) => key !== 'hash')
+        .map((key) => `${key}=${data[key]}`)
+        .sort()
+        .join('\n');
+    const secretKey = await crypto.subtle.importKey('raw', encoder.encode('WebAppData'), { name: 'HMAC', hash: 'SHA-256' }, true, ['sign']);
+    const secret = await crypto.subtle.sign('HMAC', secretKey, encoder.encode(botToken));
+    const signatureKey = await crypto.subtle.importKey('raw', secret, { name: 'HMAC', hash: 'SHA-256' }, true, ['sign']);
+    const signature = await crypto.subtle.sign('HMAC', signatureKey, encoder.encode(checkString));
+    const hex = [...new Uint8Array(signature)]
+        .map((b) => b.toString(16).padStart(2, '0'))
+        .join('');
+    return hex;
+}
 //# sourceMappingURL=crypto-js.js.map

@@ -1,1 +1,1 @@
-export declare const verifyTelegramWebAppData: (winitData: any) => boolean;
+export declare function verifyTelegramWebAppData(winitData: any): Promise<boolean>;

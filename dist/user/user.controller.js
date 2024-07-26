@@ -31,11 +31,12 @@ let UserController = class UserController {
         this.authService = authService;
         this.actionService = actionService;
     }
-    async getProfile(authorizationData) {
-        const token = this.authService.authorization(authorizationData);
+    async getProfile(request) {
+        const user = JSON.parse(request.query.user);
+        const token = await this.authService.authorization(request.query, user);
         if (!token)
             throw new common_1.HttpException("Unauth user!", common_1.HttpStatus.UNAUTHORIZED);
-        const user = await this.userService.getByUidOrCreate(authorizationData.user);
+        const userobj = await this.userService.getByUidOrCreate(user);
         const timestamp_next_week = this.userService.getTimestampNextWeek();
         const leaderboard = user_service_1.UserService.LeaderBoard;
         const l = {
@@ -46,7 +47,7 @@ let UserController = class UserController {
         };
         const resp = new user_response_dto_1.ProfileResponseDto({
             "timestamp": Date.now(),
-            "user": user,
+            "user": userobj,
             "data": game_data_dto_1.GameDataInstance,
             "timestampNextWeek": timestamp_next_week,
             "leaderboard": l,
@@ -83,7 +84,7 @@ let UserController = class UserController {
 };
 exports.UserController = UserController;
 __decorate([
-    (0, common_1.Post)("get"),
+    (0, common_1.Get)("get"),
     (0, swagger_1.ApiOperation)({
         summary: "Получение профиля юзера. Запрашивается один раз в начале игровой сессии. В теле запроса объект Telegram WebAppInitData. Если профиля нет, он создается. Возвращает Игровой объект User, содержащий количество монет, уровень, звезды. Возвращает игровые данные, стоимость звез на уровень, лоты (товары). Возвращает время следующей недели и таблицу лидеров."
     }),
@@ -92,13 +93,13 @@ __decorate([
         type: user_response_dto_1.ProfileResponseDto
     }),
     (0, swagger_1.ApiParam)({
-        name: 'authorizationData',
+        name: 'query',
         required: true,
         description: 'WebAppInitData'
     }),
-    __param(0, (0, common_1.Body)()),
+    __param(0, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [authorize_user_dto_1.WebAppInitDataDto]),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "getProfile", null);
 __decorate([

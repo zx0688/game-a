@@ -21,26 +21,27 @@ let AuthController = class AuthController {
     constructor(authService) {
         this.authService = authService;
     }
-    async auth(authorizationData) {
-        return this.authService.authorization(authorizationData);
+    async auth(request) {
+        const user = JSON.parse(request.query.user);
+        return await this.authService.authorization(request.query, user);
     }
 };
 exports.AuthController = AuthController;
 __decorate([
-    (0, common_1.Post)(),
+    (0, common_1.Get)(),
     (0, swagger_1.ApiOperation)({ summary: 'Запрос авторизации на игровом сервере, например, если срок игрового токена истек. Profile/Get выдает токен после успешной авторизации в Telegram. С этим токеном нужно делать запросы на игровой сервер. Если токен истек его нужно перезапрашивать этим методом' }),
     (0, swagger_1.ApiResponse)({
         status: 200,
         type: authorize_user_dto_1.TokenDto,
     }),
     (0, swagger_1.ApiParam)({
-        name: 'authorizationData',
+        name: 'query',
         required: true,
         description: 'WebAppInitData'
     }),
-    __param(0, (0, common_1.Body)()),
+    __param(0, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [authorize_user_dto_1.WebAppInitDataDto]),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "auth", null);
 exports.AuthController = AuthController = __decorate([

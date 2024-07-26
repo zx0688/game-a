@@ -1,4 +1,5 @@
-import { Controller, Get, Param, Request, UnauthorizedException, Query, ParseArrayPipe, Body, HttpStatus, HttpException, ValidationPipe, UsePipes, Inject, Post, Logger } from '@nestjs/common';
+import { Controller, Get, Param, UnauthorizedException, Query, ParseArrayPipe, Body, HttpStatus, HttpException, ValidationPipe, UsePipes, Inject, Post, Logger, Req } from '@nestjs/common';
+import { Request } from 'express';
 import { UserService } from './user.service';
 import { Item, User } from './schema/user.schema';
 import { GameDataInstance } from './dto/game-data.dto';
@@ -20,7 +21,7 @@ export class UserController {
         private authService: AuthService,
         private actionService: ActionService) { }
 
-    @Post("get")
+    @Get("get")
     @ApiOperation({
         summary: "Получение профиля юзера. Запрашивается один раз в начале игровой сессии. В теле запроса объект Telegram WebAppInitData. Если профиля нет, он создается. Возвращает Игровой объект User, содержащий количество монет, уровень, звезды. Возвращает игровые данные, стоимость звез на уровень, лоты (товары). Возвращает время следующей недели и таблицу лидеров."
     })
@@ -29,18 +30,19 @@ export class UserController {
         type: ProfileResponseDto
     })
     @ApiParam({
-        name: 'authorizationData',
+        name: 'query',
         required: true,
         description: 'WebAppInitData'
     })
-    async getProfile(@Body() authorizationData: WebAppInitDataDto) {
-
-        const token = this.authService.authorization(authorizationData);
-
+    async getProfile(
+        @Req() request: Request
+    ) {
+        const user = JSON.parse(request.query.user as string);
+        const token = await this.authService.authorization(request.query, user);
         if (!token)
             throw new HttpException("Unauth user!", HttpStatus.UNAUTHORIZED);
 
-        const user = await this.userService.getByUidOrCreate(authorizationData.user);
+        const userobj = await this.userService.getByUidOrCreate(user);
         const timestamp_next_week = this.userService.getTimestampNextWeek();
         const leaderboard = UserService.LeaderBoard;
         const l = {
@@ -52,7 +54,7 @@ export class UserController {
 
         const resp = new ProfileResponseDto({
             "timestamp": Date.now(),
-            "user": user,
+            "user": userobj,
             "data": GameDataInstance,
             "timestampNextWeek": timestamp_next_week,
             "leaderboard": l,

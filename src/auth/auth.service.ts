@@ -14,7 +14,7 @@ export class AuthService {
     constructor(private userService: UserService) { }
 
 
-    public authorization(authorizationData: WebAppInitDataDto): TokenDto {
+    public async authorization(authorizationData: any, user: any): Promise<TokenDto> {
 
         const auth_date = parseInt(authorizationData.auth_date);
 
@@ -22,10 +22,11 @@ export class AuthService {
             throw new HttpException(`Auth data is outdated`, HttpStatus.UNAUTHORIZED);
 
         //if (process.env.NODE_ENV === 'development') { console.log("dev env auth!"); }
-        if (!verifyTelegramWebAppData(authorizationData))
+        const isValid = await verifyTelegramWebAppData(authorizationData);
+        if (!isValid)
             throw new HttpException(`Verification failed!`, HttpStatus.UNAUTHORIZED);
 
-        const uid = authorizationData.user.id.toString();
+        const uid = user.id.toString();
         const expire = Date.now() / 1000 + 3600; // 1 hours
         const token = this.createHash(uid, expire);
 

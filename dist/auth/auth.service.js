@@ -18,13 +18,14 @@ let AuthService = class AuthService {
     constructor(userService) {
         this.userService = userService;
     }
-    authorization(authorizationData) {
+    async authorization(authorizationData, user) {
         const auth_date = parseInt(authorizationData.auth_date);
         if ((Date.now() / 1000 - auth_date) > 86400)
             throw new common_1.HttpException(`Auth data is outdated`, common_1.HttpStatus.UNAUTHORIZED);
-        if (!(0, crypto_js_1.verifyTelegramWebAppData)(authorizationData))
+        const isValid = await (0, crypto_js_1.verifyTelegramWebAppData)(authorizationData);
+        if (!isValid)
             throw new common_1.HttpException(`Verification failed!`, common_1.HttpStatus.UNAUTHORIZED);
-        const uid = authorizationData.user.id.toString();
+        const uid = user.id.toString();
         const expire = Date.now() / 1000 + 3600;
         const token = this.createHash(uid, expire);
         return {
